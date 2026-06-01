@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { emptyState, type GameState, GameStateSchema } from "./route";
+import { type Ruleset, RulesetSchema } from "./schema";
 
 // ルート伴走セッションの永続化(localStorage)。進捗 = GameState。
 
@@ -9,6 +10,8 @@ export const RouteSessionSchema = z.object({
   id: z.string(),
   name: z.string(),
   routeId: z.string(),
+  // 選択した拡張。ruleset 導入前の旧セッションは R&F として復元する。
+  ruleset: RulesetSchema.default("rise-and-fall"),
   createdAt: z.string(),
   state: GameStateSchema,
 });
@@ -51,11 +54,16 @@ export function getSession(id: string): RouteSession | undefined {
   return loadSessions().find((s) => s.id === id);
 }
 
-export function createSession(name: string, routeId: string): RouteSession {
+export function createSession(
+  name: string,
+  routeId: string,
+  ruleset: Ruleset,
+): RouteSession {
   const session: RouteSession = {
     id: crypto.randomUUID(),
     name,
     routeId,
+    ruleset,
     createdAt: new Date().toISOString(),
     state: emptyState(),
   };

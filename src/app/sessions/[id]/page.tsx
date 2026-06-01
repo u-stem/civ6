@@ -16,29 +16,38 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getRoute } from "@/data/routes";
 import {
+  activeBranches,
   currentPhase,
   evaluateWarnings,
+  filterRoute,
   type GameState,
   LANES,
 } from "@/lib/route";
 import { getSession, updateState } from "@/lib/route-storage";
+import { RULESET_LABELS, type Ruleset } from "@/lib/schema";
 
 export default function SessionPage() {
   const params = useParams();
   const id = typeof params.id === "string" ? params.id : "";
   const [name, setName] = useState("");
   const [routeId, setRouteId] = useState("");
+  const [ruleset, setRuleset] = useState<Ruleset>("rise-and-fall");
   const [state, setState] = useState<GameState | null>(null);
   const [ready, setReady] = useState(false);
+  const [expandAll, setExpandAll] = useState(false);
 
   useEffect(() => {
     const session = getSession(id);
     if (session) {
       setName(session.name);
       setRouteId(session.routeId);
+      setRuleset(session.ruleset);
       setState(session.state);
     }
     setReady(true);
@@ -57,7 +66,8 @@ export default function SessionPage() {
     );
   }
 
-  const route = routeId ? getRoute(routeId) : undefined;
+  const raw = routeId ? getRoute(routeId) : undefined;
+  const route = raw ? filterRoute(raw, ruleset) : undefined;
   if (!route || !state) {
     return (
       <main className="mx-auto max-w-6xl px-5 py-8">
@@ -74,6 +84,7 @@ export default function SessionPage() {
   const s = state;
   const warnings = evaluateWarnings(route, s);
   const phase = currentPhase(route, s);
+  const activeCount = activeBranches(route, s).length;
 
   const controls = (
     <StateControls
@@ -107,6 +118,7 @@ export default function SessionPage() {
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
         <Badge variant="secondary">{route.name}</Badge>
+        <Badge variant="outline">{RULESET_LABELS[ruleset]}</Badge>
         {phase && <Badge variant="outline">{phase.label}</Badge>}
       </div>
 
@@ -125,23 +137,65 @@ export default function SessionPage() {
           </div>
         </aside>
 
-        {/* メイン */}
-        <div className="space-y-6">
+        {/* メイン: 警告・フェーズは常時、その他は本線/分岐/判断軸のタブに畳む */}
+        <div className="space-y-4">
           {phase && (
             <p className="text-sm text-muted-foreground">{phase.hint}</p>
           )}
 
           <WarningBanner warnings={warnings} />
 
-          <BranchSection route={route} state={s} />
+          <Tabs defaultValue="lanes">
+            <TabsList className="w-full">
+              <TabsTrigger value="lanes">本線</TabsTrigger>
+              <TabsTrigger value="branches">
+                分岐
+                {activeCount > 0 && (
+                  <Badge variant="secondary" className="ml-1 px-1.5">
+                    {activeCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="principles">判断軸</TabsTrigger>
+            </TabsList>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            {LANES.map((lane) => (
-              <LaneColumn key={lane} route={route} lane={lane} state={s} />
-            ))}
-          </div>
+            <TabsContent value="lanes" className="mt-4 space-y-3">
+              <div className="flex justify-end">
+                <Label className="flex items-center gap-2 text-xs font-normal text-muted-foreground">
+                  全部表示
+                  <Switch
+                    checked={expandAll}
+                    onCheckedChange={(v) => setExpandAll(v === true)}
+                  />
+                </Label>
+              </div>
+              <div className="grid gap-4 lg:grid-cols-2">
+                {LANES.map((lane) => (
+                  <LaneColumn
+                    key={lane}
+                    route={route}
+                    lane={lane}
+                    state={s}
+                    expandAll={expandAll}
+                  />
+                ))}
+              </div>
+            </TabsContent>
 
-          <PrinciplePanel route={route} />
+            <TabsContent value="branches" className="mt-4">
+              {route.branches.length > 0 ? (
+                <BranchSection route={route} state={s} />
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  このルートに状況分岐はありません。
+                </p>
+              )}
+            </TabsContent>
+
+            <TabsContent value="principles" className="mt-4">
+              <PrinciplePanel route={route} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </main>

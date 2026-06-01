@@ -5,6 +5,7 @@ const valid: RouteSession = {
   id: "s1",
   name: "セッション1",
   routeId: "babylon-culture",
+  ruleset: "gathering-storm",
   createdAt: "2026-06-01T00:00:00.000Z",
   state: { turn: 12, counters: { slinger: 3 }, flags: { "tech.mining": true } },
 };
@@ -25,5 +26,18 @@ describe("parseSessions", () => {
 
   test("正常な配列を復元する", () => {
     expect(parseSessions(JSON.stringify([valid]))[0]?.state.turn).toBe(12);
+  });
+
+  test("ruleset を保持する", () => {
+    expect(parseSessions(JSON.stringify([valid]))[0]?.ruleset).toBe(
+      "gathering-storm",
+    );
+  });
+
+  test("ruleset 欠落の旧データは R&F として復元する", () => {
+    const { ruleset: _omit, ...legacy } = valid;
+    expect(parseSessions(JSON.stringify([legacy]))[0]?.ruleset).toBe(
+      "rise-and-fall",
+    );
   });
 });

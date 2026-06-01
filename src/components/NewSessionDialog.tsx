@@ -21,20 +21,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ROUTES } from "@/data/routes";
+import {
+  RULESET_LABELS,
+  RULESETS,
+  type Ruleset,
+  RulesetSchema,
+} from "@/lib/schema";
 
 export function NewSessionDialog({
   onCreate,
 }: {
-  onCreate: (name: string, routeId: string) => void;
+  onCreate: (name: string, routeId: string, ruleset: Ruleset) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [routeId, setRouteId] = useState(ROUTES[0]?.id ?? "");
+  const [ruleset, setRuleset] = useState<Ruleset>("rise-and-fall");
   const [name, setName] = useState("");
   const route = useMemo(() => ROUTES.find((r) => r.id === routeId), [routeId]);
 
   function submit() {
     if (!route) return;
-    onCreate(name.trim() || route.name, route.id);
+    onCreate(name.trim() || route.name, route.id, ruleset);
     setOpen(false);
   }
 
@@ -73,6 +80,27 @@ export function NewSessionDialog({
                 {route.premise}
               </p>
             )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="ruleset">拡張(ルールセット)</Label>
+            <Select
+              value={ruleset}
+              onValueChange={(v) => setRuleset(RulesetSchema.parse(v))}
+            >
+              <SelectTrigger id="ruleset" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {RULESETS.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {RULESET_LABELS[r]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              選んだ拡張に存在しない手(ロックバンド等)は伴走画面から除外されます。
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="name">セッション名</Label>

@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { counter, flag, type GameState, type Route } from "@/lib/route";
+import {
+  counter,
+  flag,
+  type GameState,
+  type Route,
+  visibleCounters,
+  visibleFlags,
+} from "@/lib/route";
 
 type Props = {
   route: Route;
@@ -15,7 +22,10 @@ type Props = {
   onFlag: (key: string, value: boolean) => void;
 };
 
-function Stepper({
+// ラベルを上、ステッパーを下に積むセル。
+// 狭いカラムでもラベルとボタンが衝突しない。h-full + justify-between で
+// 隣セルとラベル行数が違ってもステッパーの高さが揃う。
+function StepperCell({
   label,
   value,
   onChange,
@@ -25,8 +35,10 @@ function Stepper({
   onChange: (delta: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-sm">{label}</span>
+    <div className="flex h-full flex-col justify-between gap-1.5">
+      <span className="text-xs leading-tight text-muted-foreground">
+        {label}
+      </span>
       <div className="flex items-center gap-1.5">
         <Button
           variant="outline"
@@ -64,28 +76,37 @@ export function StateControls({
       <CardHeader>
         <CardTitle className="text-base">現在の状態を入力</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
-        <Stepper label="ターン" value={state.turn} onChange={onTurn} />
-        {route.counters.map((c) => (
-          <Stepper
-            key={c.key}
-            label={c.label}
-            value={counter(state, c.key)}
-            onChange={(d) => onCounter(c.key, d)}
-          />
-        ))}
-        {route.flags.map((f) => (
-          <Label
-            key={f.key}
-            className="flex items-center justify-between gap-2 font-normal"
-          >
-            <span className="text-sm">{f.label}</span>
-            <Switch
-              checked={flag(state, f.key)}
-              onCheckedChange={(v) => onFlag(f.key, v === true)}
+      <CardContent className="space-y-4">
+        {/* 数値カウンターは2列で詰めて高さを抑える。未解放・陳腐化したものは出さない */}
+        <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+          <StepperCell label="ターン" value={state.turn} onChange={onTurn} />
+          {visibleCounters(route, state).map((c) => (
+            <StepperCell
+              key={c.key}
+              label={c.label}
+              value={counter(state, c.key)}
+              onChange={(d) => onCounter(c.key, d)}
             />
-          </Label>
-        ))}
+          ))}
+        </div>
+        {/* フラグは全幅1列。スイッチが細いのでラベルと衝突しない */}
+        {visibleFlags(route, state).length > 0 && (
+          <div className="grid gap-y-2 border-t pt-3">
+            {visibleFlags(route, state).map((f) => (
+              <Label
+                key={f.key}
+                className="flex items-center justify-between gap-3 font-normal"
+              >
+                <span className="min-w-0 text-sm leading-tight">{f.label}</span>
+                <Switch
+                  className="shrink-0"
+                  checked={flag(state, f.key)}
+                  onCheckedChange={(v) => onFlag(f.key, v === true)}
+                />
+              </Label>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

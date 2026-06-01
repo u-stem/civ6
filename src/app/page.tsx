@@ -24,6 +24,7 @@ import { getRoute } from "@/data/routes";
 import {
   currentPhase,
   evaluateWarnings,
+  filterRoute,
   isDone,
   type Route,
 } from "@/lib/route";
@@ -33,6 +34,7 @@ import {
   loadSessions,
   type RouteSession,
 } from "@/lib/route-storage";
+import { RULESET_LABELS, type Ruleset } from "@/lib/schema";
 
 function sequenceProgress(route: Route, session: RouteSession) {
   const seq = route.nodes.filter((n) => n.type === "sequence");
@@ -50,8 +52,8 @@ export default function Page() {
     setReady(true);
   }, []);
 
-  function handleCreate(name: string, routeId: string) {
-    const session = createSession(name, routeId);
+  function handleCreate(name: string, routeId: string, ruleset: Ruleset) {
+    const session = createSession(name, routeId, ruleset);
     toast.success("セッションを開始しました");
     router.push(`/sessions/${session.id}`);
   }
@@ -90,8 +92,9 @@ export default function Page() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {sessions.map((session) => {
-            const route = getRoute(session.routeId);
-            if (!route) return null;
+            const raw = getRoute(session.routeId);
+            if (!raw) return null;
+            const route = filterRoute(raw, session.ruleset);
             const progress = sequenceProgress(route, session);
             const warnings = evaluateWarnings(route, session.state);
             const phase = currentPhase(route, session.state);
@@ -104,6 +107,9 @@ export default function Page() {
                   <CardTitle className="truncate">{session.name}</CardTitle>
                   <div className="flex flex-wrap gap-1.5">
                     <Badge variant="secondary">{route.name}</Badge>
+                    <Badge variant="outline">
+                      {RULESET_LABELS[session.ruleset]}
+                    </Badge>
                     <Badge variant="outline">ターン {session.state.turn}</Badge>
                     {phase && <Badge variant="outline">{phase.label}</Badge>}
                   </div>

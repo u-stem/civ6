@@ -3,10 +3,14 @@ import {
   activeBranches,
   currentPhase,
   evaluateWarnings,
+  filterRoute,
   type GameState,
   isDone,
   laneProgress,
+  meetsRuleset,
   type Route,
+  visibleCounters,
+  visibleFlags,
 } from "./route";
 
 function makeState(o: Partial<GameState> = {}): GameState {
@@ -130,5 +134,155 @@ describe("activeBranches", () => {
 
   test("満たさなければ active なし", () => {
     expect(activeBranches(route, makeState())).toHaveLength(0);
+  });
+});
+
+describe("visibleCounters / visibleFlags", () => {
+  const gated: Route = {
+    ...route,
+    counters: [
+      { key: "slinger", label: "投石兵" }, // 常時(relevant 未指定)
+      {
+        key: "crossbow",
+        label: "弩兵",
+        relevant: (s) => s.flags["tech.machinery"] === true, // 機械後のみ
+      },
+    ],
+    flags: [
+      { key: "tech.machinery", label: "機械" }, // 常時
+      {
+        key: "hero",
+        label: "偉人",
+        relevant: (s) => s.turn >= 50, // 50ターン以降のみ
+      },
+    ],
+  };
+
+  test("relevant 未指定は常に表示", () => {
+    expect(visibleCounters(gated, makeState()).map((c) => c.key)).toContain(
+      "slinger",
+    );
+    expect(visibleFlags(gated, makeState()).map((f) => f.key)).toContain(
+      "tech.machinery",
+    );
+  });
+
+  test("未解放のカウンターは隠れる", () => {
+    expect(visibleCounters(gated, makeState()).map((c) => c.key)).not.toContain(
+      "crossbow",
+    );
+  });
+
+  test("条件を満たすと表示される", () => {
+    const s = makeState({ flags: { "tech.machinery": true } });
+    expect(visibleCounters(gated, s).map((c) => c.key)).toContain("crossbow");
+  });
+
+  test("フラグも relevant で出し分ける", () => {
+    expect(
+      visibleFlags(gated, makeState({ turn: 1 })).map((f) => f.key),
+    ).not.toContain("hero");
+    expect(
+      visibleFlags(gated, makeState({ turn: 60 })).map((f) => f.key),
+    ).toContain("hero");
+  });
+});
+
+describe("meetsRuleset", () => {
+  test("min 未指定は全ルールセットで true", () => {
+    expect(meetsRuleset(undefined, "base")).toBe(true);
+    expect(meetsRuleset(undefined, "gathering-storm")).toBe(true);
+  });
+
+  test("active が min 以上なら true", () => {
+    expect(meetsRuleset("gathering-storm", "gathering-storm")).toBe(true);
+    expect(meetsRuleset("rise-and-fall", "gathering-storm")).toBe(true);
+  });
+
+  test("active が min 未満なら false", () => {
+    expect(meetsRuleset("gathering-storm", "rise-and-fall")).toBe(false);
+    expect(meetsRuleset("rise-and-fall", "base")).toBe(false);
+  });
+});
+
+describe("filterRoute", () => {
+  const gated: Route = {
+    ...route,
+    nodes: [
+      ...route.nodes,
+      {
+        type: "conditional",
+        id: "c-gs",
+        lane: "civic",
+        label: "GS専用",
+        trigger: "",
+        detail: "",
+        minRuleset: "gathering-storm",
+      },
+    ],
+    warnings: [
+      ...route.warnings,
+      {
+        id: "w-gs",
+        severity: "warn",
+        when: () => true,
+        message: "GS警告",
+        minRuleset: "gathering-storm",
+      },
+    ],
+    branches: [
+      {
+        id: "b-gs",
+        label: "GS分岐",
+        detail: "",
+        when: () => true,
+        nodes: [],
+        minRuleset: "gathering-storm",
+      },
+      {
+        id: "b-mixed",
+        label: "混在分岐",
+        detail: "",
+        when: () => true,
+        nodes: [
+          {
+            type: "conditional",
+            id: "c-mixed-gs",
+            lane: "production",
+            label: "内側GS",
+            trigger: "",
+            detail: "",
+            minRuleset: "gathering-storm",
+          },
+          {
+            type: "conditional",
+            id: "c-mixed-base",
+            lane: "production",
+            label: "内側base",
+            trigger: "",
+            detail: "",
+          },
+        ],
+      },
+    ],
+  };
+
+  test("R&F では GS専用ノード/警告/分岐を除外する", () => {
+    const f = filterRoute(gated, "rise-and-fall");
+    expect(f.nodes.map((n) => n.id)).not.toContain("c-gs");
+    expect(f.warnings.map((w) => w.id)).not.toContain("w-gs");
+    expect(f.branches.map((b) => b.id)).not.toContain("b-gs");
+  });
+
+  test("R&F では分岐内の GS専用ノードだけ除外し base ノードは残す", () => {
+    const f = filterRoute(gated, "rise-and-fall");
+    const mixed = f.branches.find((b) => b.id === "b-mixed");
+    expect(mixed?.nodes.map((n) => n.id)).toEqual(["c-mixed-base"]);
+  });
+
+  test("GS では全要素を残す", () => {
+    const f = filterRoute(gated, "gathering-storm");
+    expect(f.nodes.map((n) => n.id)).toContain("c-gs");
+    expect(f.branches.map((b) => b.id)).toContain("b-gs");
   });
 });
