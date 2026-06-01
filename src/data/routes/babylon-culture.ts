@@ -30,6 +30,7 @@ export const babylonCulture: Route = {
     { key: "hero.davinci", label: "大技術者ダ・ヴィンチ確保" },
     { key: "spy.counterTrained", label: "スパイ防諜育成済み" },
     { key: "ai.adjacent", label: "攻められる隣接AIがいる" },
+    { key: "coastal.heavy", label: "海岸・高魅力タイルの都市が多い" },
   ],
 
   nodes: [
@@ -192,15 +193,6 @@ export const babylonCulture: Route = {
     },
     {
       type: "conditional",
-      id: "cnd-seaside-park",
-      lane: "production",
-      label: "シーサイドリゾート・国立公園を造成",
-      trigger: "終盤、魅力の高い海岸・タイル群があるとき",
-      detail:
-        "タイルの魅力に応じた観光力。エッフェル塔などで魅力を底上げすると効果が大きい。",
-    },
-    {
-      type: "conditional",
       id: "cnd-rockband",
       lane: "civic",
       label: "ロックバンドで観光をスパイク",
@@ -214,6 +206,42 @@ export const babylonCulture: Route = {
       label: "観光開放政策",
       trigger: "終盤、相手との国境・交易路・宗教が絡むとき",
       detail: "開かれた国境・交易路・宗教一致で相手への観光を最大化する。",
+    },
+    {
+      type: "conditional",
+      id: "cnd-production-base",
+      lane: "production",
+      label: "遺産生産の基盤を作る(製鋼→発電所、総督マグヌス)",
+      trigger: "工業化のあと、生産を伸ばしたいとき",
+      detail:
+        "製鋼で石炭火力発電所を建てて生産力を底上げ。総督マグヌスを生産の中心都市へ、遺産ルール地方も狙う。遺産を量産する土台。",
+    },
+    {
+      type: "conditional",
+      id: "cnd-wonder-spam",
+      lane: "civic",
+      label: "観光遺産を大量に建てる",
+      trigger: "生産基盤が整ったら常時",
+      detail:
+        "政策「ゴシック建築」「摩天楼」で遺産生産を加速。バビロンは大著作物へのボーナスが無いため、観光の主力は自前の遺産になる。",
+    },
+    {
+      type: "conditional",
+      id: "cnd-era-skip",
+      lane: "tech",
+      label: "ひらめきで時代を飛ばし遺産観光を最大化",
+      trigger: "プラスチック等を先行解禁できるとき",
+      detail:
+        "遺産の観光力は『登場時代と現在の研究時代の差』で伸びる。プラスチックで原子力へ飛ばすと古い遺産ほど観光が跳ね上がる。",
+    },
+    {
+      type: "conditional",
+      id: "cnd-golden-wonder",
+      lane: "civic",
+      label: "黄金時代「Wish You Were Here」",
+      trigger: "原子力以降で黄金時代に入れるとき",
+      detail:
+        "総督のいる都市の遺産観光+50%。遺産を多く抱えた都市に総督を置いて発動させる。",
     },
 
     // --- principle(判断軸・役割) ---
@@ -265,6 +293,13 @@ export const babylonCulture: Route = {
       lane: "civic",
       label: "黄金時代の献身を文化・偉人へ寄せる",
       body: "時代スコアを稼いで黄金時代を維持し、献身は偉人獲得や区域・観光に効くものを選ぶ。AI 収奪は時代スコアにもなる。",
+    },
+    {
+      type: "principle",
+      id: "prn-wonder-tourism",
+      lane: "civic",
+      label: "観光の主力は自前の遺産(時代差で伸びる)",
+      body: "バビロンは大著作物・文化へのパッシブが無い。ひらめきで時代を先へ進めるほど、自分で建てた遺産の観光力が時代差で大きくなる。劇場広場・偉人は土台、遺産が稼ぎ頭。",
     },
   ],
 
@@ -400,6 +435,51 @@ export const babylonCulture: Route = {
           trigger: "区域枠が空くたび",
           detail:
             "偉人ポイントと大著作スロットを最大化し、純粋な観光量で相対ゲージを通す。",
+        },
+      ],
+    },
+    {
+      id: "branch-nature",
+      label: "自然観光ルート(海岸・高魅力の都市が多い)",
+      detail:
+        "海岸や魅力の高いタイルが多いなら、リゾート・国立公園・バイオスフィアで観光を稼ぐ。魅力の底上げが前提になる。",
+      when: (s) => flag(s, "coastal.heavy"),
+      nodes: [
+        {
+          type: "conditional",
+          id: "cnd-eiffel",
+          lane: "production",
+          label: "エッフェル塔で全タイルの魅力+2",
+          trigger: "製鋼を取得し、自然観光を狙うとき",
+          detail:
+            "領土の全タイルが魅力+2。シーサイドリゾートと国立公園の観光がまとめて伸びる前提条件。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-resort-park",
+          lane: "production",
+          label: "シーサイドリゾート・国立公園を造成",
+          trigger: "魅力が「絶景」級のタイルが揃ったとき",
+          detail:
+            "シーサイドリゾートは海岸タイルの魅力×2の観光。国立公園は内部タイルの魅力合計。森を植える・不要な地形を除去して魅力を上げる。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-cristo",
+          lane: "civic",
+          label: "コルコバードのキリスト像",
+          trigger: "マスメディアに到達したとき",
+          detail:
+            "シーサイドリゾートの観光2倍 + 啓蒙思想の観光ペナルティを除去。自然観光ルートの要。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-biosphere",
+          lane: "production",
+          label: "バイオスフィアで再生可能エネルギーを観光化",
+          trigger: "化学合成物質を取得し、河川隣接の近隣住区があるとき",
+          detail:
+            "洋上風力・太陽光・風力・地熱・水力ダムの電力に等しい観光力を得る。終盤の観光を大きく押し上げる。",
         },
       ],
     },
