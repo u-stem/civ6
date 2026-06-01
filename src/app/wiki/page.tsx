@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CIVILIZATIONS, VICTORY_GUIDES } from "@/data";
 import { VICTORY_LABELS } from "@/data/labels";
+import { CIVICS, TECHNOLOGIES } from "@/data/research";
 import { VICTORY_TYPES } from "@/lib/schema";
 
 export default function WikiIndex() {
@@ -27,6 +28,34 @@ export default function WikiIndex() {
               </Card>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+          研究ツリー
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link href="/wiki/tech" className="block">
+            <Card className="h-full transition-colors hover:border-primary/50">
+              <CardHeader>
+                <CardTitle>テクノロジーツリー</CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  科学で進む / 全 {TECHNOLOGIES.length} 件
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+          <Link href="/wiki/civics" className="block">
+            <Card className="h-full transition-colors hover:border-primary/50">
+              <CardHeader>
+                <CardTitle>社会制度ツリー</CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  文化で進む / 全 {CIVICS.length} 件
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
       </section>
 

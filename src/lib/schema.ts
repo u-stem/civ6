@@ -147,3 +147,47 @@ export const SavedGameSchema = z.object({
   notes: z.record(z.string(), z.string()).optional(),
 });
 export type SavedGame = z.infer<typeof SavedGameSchema>;
+
+// 研究ツリー(テクノロジー / 社会制度)のノード。
+export const RESEARCH_KINDS = ["tech", "civic"] as const;
+export const ResearchKindSchema = z.enum(RESEARCH_KINDS);
+export type ResearchKind = z.infer<typeof ResearchKindSchema>;
+
+export const UNLOCK_TYPES = [
+  "unit",
+  "building",
+  "district",
+  "wonder",
+  "improvement",
+  "project",
+  "policy",
+  "government",
+  "other",
+] as const;
+export const UnlockTypeSchema = z.enum(UNLOCK_TYPES);
+export type UnlockType = z.infer<typeof UnlockTypeSchema>;
+
+export const UnlockSchema = z.object({
+  type: UnlockTypeSchema,
+  nameEn: z.string(),
+  nameJa: z.string(),
+});
+export type Unlock = z.infer<typeof UnlockSchema>;
+
+export const ResearchNodeSchema = z.object({
+  id: z.string(),
+  kind: ResearchKindSchema,
+  nameEn: z.string(),
+  nameJa: z.string(),
+  era: EraSchema,
+  // 標準スピードでの科学(tech)/文化(civic)コスト。
+  cost: z.number().int().nonnegative(),
+  // 前提ノード id(同ツリー内)。
+  prerequisites: z.array(z.string()),
+  // ユーレカ(技術)/霊感(社会制度)の発動条件。初期ノードなど無い場合は省略。
+  boost: z
+    .object({ conditionEn: z.string(), conditionJa: z.string() })
+    .optional(),
+  unlocks: z.array(UnlockSchema),
+});
+export type ResearchNode = z.infer<typeof ResearchNodeSchema>;
