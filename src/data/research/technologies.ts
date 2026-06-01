@@ -7,8 +7,8 @@ import type { ResearchNode } from "@/lib/schema";
 // - 「資源タイルに鉱山/油井」系や条件のノイズ("0" 表記・自己参照)は正しい英語条件へ補正。
 // - 後半技術の一部(Rocketry / Satellites / Lasers / Stealth Technology / Nuclear Fission /
 //   Nuclear Fusion / Guidance Systems / Synthetic Materials)は資料間で条件が食い違い確証が
-//   取れないため、ユーレカを省略している(推測で埋めない)。
-// - ユーレカを持たない技術(Pottery / Animal Husbandry / Mining / Future Tech)は boost なし。
+//   取れないため、ひらめき(技術ブースト)を省略している(推測で埋めない)。
+// - ひらめきを持たない技術(Pottery / Animal Husbandry / Mining / Future Tech)は boost なし。
 export const technologies = [
   // --- 古代 ---
   {

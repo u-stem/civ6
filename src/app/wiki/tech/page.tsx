@@ -17,8 +17,8 @@ export default function TechTreePage() {
         テクノロジーツリー
       </h1>
       <p className="mt-1 mb-6 text-sm text-muted-foreground">
-        科学で進む研究ツリー（文明の興亡基準）。ユーレカ条件を満たすと必要科学が半減します。
-        バビロンはユーレカ達成で技術が即解禁されるため、各ユーレカが攻略の鍵になります。
+        科学で進む研究ツリー（文明の興亡基準）。ひらめき条件を満たすと必要科学が半減します。
+        バビロンはひらめき達成で技術が即解禁されるため、各ひらめきが攻略の鍵になります。
       </p>
       <ResearchTree nodes={TECHNOLOGIES} />
     </main>

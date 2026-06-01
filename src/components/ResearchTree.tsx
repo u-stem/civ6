@@ -6,7 +6,7 @@ import type { ResearchNode } from "@/lib/schema";
 
 function ResearchNodeCard({ node }: { node: ResearchNode }) {
   const prereqs = node.prerequisites.map((p) => getNode(p)?.nameJa ?? p);
-  const boostLabel = node.kind === "tech" ? "ユーレカ" : "ひらめき";
+  const boostLabel = node.kind === "tech" ? "ひらめき" : "天啓";
   const costLabel = node.kind === "tech" ? "科学" : "文化";
 
   return (

@@ -184,7 +184,7 @@ export const ResearchNodeSchema = z.object({
   cost: z.number().int().nonnegative(),
   // 前提ノード id(同ツリー内)。
   prerequisites: z.array(z.string()),
-  // ユーレカ(技術)/霊感(社会制度)の発動条件。初期ノードなど無い場合は省略。
+  // ひらめき(技術)/天啓(社会制度)の発動条件。初期ノードなど無い場合は省略。
   boost: z
     .object({ conditionEn: z.string(), conditionJa: z.string() })
     .optional(),
