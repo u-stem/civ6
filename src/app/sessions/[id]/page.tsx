@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BranchSection } from "@/components/route/BranchSection";
 import { LaneColumn } from "@/components/route/LaneColumn";
 import { PrinciplePanel } from "@/components/route/PrinciplePanel";
 import { StateControls } from "@/components/route/StateControls";
@@ -110,6 +111,10 @@ export default function SessionPage() {
             commit({ ...s, flags: { ...s.flags, [key]: value } })
           }
         />
+      </div>
+
+      <div className="mb-6">
+        <BranchSection route={route} state={s} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

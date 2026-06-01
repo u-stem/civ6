@@ -29,6 +29,7 @@ export const babylonCulture: Route = {
     { key: "civic.dramaPoetry", label: "演劇と詩(社会制度)" },
     { key: "hero.davinci", label: "大技術者ダ・ヴィンチ確保" },
     { key: "spy.counterTrained", label: "スパイ防諜育成済み" },
+    { key: "ai.adjacent", label: "攻められる隣接AIがいる" },
   ],
 
   nodes: [
@@ -180,24 +181,6 @@ export const babylonCulture: Route = {
       trigger: "劇場広場が育ち、作品・遺物が集まったとき",
       detail:
         "同種3作品などのテーマボーナスで観光力が倍化。考古学者で遺物を発掘して埋める。",
-    },
-    {
-      type: "conditional",
-      id: "cnd-raid-ai",
-      lane: "military",
-      label: "AI 都市を資産ごと収奪",
-      trigger: "弩兵が揃い、隣接 AI がいるとき",
-      detail:
-        "遺産・劇場広場・遺物がそのまま観光に乗る。時間浪費でなく勝利への変換。",
-    },
-    {
-      type: "conditional",
-      id: "cnd-steal-work",
-      lane: "military",
-      label: "スパイで偉大な作品を強奪",
-      trigger: "スパイ育成済み & 相手都市に作品があるとき",
-      detail:
-        "相手の文化を削り自分の劇場広場に作品が増える。相対判定で二重に効く。",
     },
     {
       type: "conditional",
@@ -353,6 +336,72 @@ export const babylonCulture: Route = {
       fromTurn: 140,
       label: "終盤 ゲージ通し",
       hint: "遺産先取り・作品強奪・観光開放政策で相対ゲージを通しきる。",
+    },
+  ],
+
+  branches: [
+    {
+      id: "branch-raid",
+      label: "収奪ルート(攻められる隣接AIがいる)",
+      detail:
+        "弩兵で隣接 AI を資産ごと奪い、遺産・劇場広場・遺物をそのまま観光と時代スコアに変換する。文化勝利は相対判定なので、相手を削るほど閾値が下がる。",
+      when: (s) => flag(s, "ai.adjacent"),
+      nodes: [
+        {
+          type: "conditional",
+          id: "cnd-raid-ai",
+          lane: "military",
+          label: "AI 都市を資産ごと収奪",
+          trigger: "弩兵が揃い、隣接 AI がいるとき",
+          detail:
+            "遺産・劇場広場・遺物がそのまま観光に乗る。時間浪費でなく勝利への変換。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-steal-work",
+          lane: "military",
+          label: "スパイで偉大な作品を強奪",
+          trigger: "スパイ育成済み & 相手都市に作品があるとき",
+          detail:
+            "相手の文化を削り自分の劇場広場に作品が増える。相対判定で二重に効く。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-raid-defend",
+          lane: "military",
+          label: "収奪戦力を維持し前線都市を防衛",
+          trigger: "収奪を続ける限り常時",
+          detail:
+            "弩兵と防壁で奪った都市を守る。文化本線(劇場広場・偉人)が止まらない範囲で軍を運用する。",
+        },
+      ],
+    },
+    {
+      id: "branch-tall",
+      label: "内政集中ルート(隣接AIがいない)",
+      detail:
+        "収奪に頼れない分、自力の遺産・劇場広場・偉人で観光を伸ばす。軍は防衛最小限にとどめ、生産を文化資産に全振りする。",
+      when: (s) => !flag(s, "ai.adjacent"),
+      nodes: [
+        {
+          type: "conditional",
+          id: "cnd-tall-wonders",
+          lane: "civic",
+          label: "観光遺産を自力で量産",
+          trigger: "生産に余裕があるとき",
+          detail:
+            "収奪で得られない観光遺産を自前で建てる。ひらめきで前提技術を先取りし、相手より早く押さえる。",
+        },
+        {
+          type: "conditional",
+          id: "cnd-tall-theater",
+          lane: "civic",
+          label: "劇場広場を全都市に増設",
+          trigger: "区域枠が空くたび",
+          detail:
+            "偉人ポイントと大著作スロットを最大化し、純粋な観光量で相対ゲージを通す。",
+        },
+      ],
     },
   ],
 };
