@@ -17,8 +17,7 @@ export default function TechTreePage() {
         テクノロジーツリー
       </h1>
       <p className="mt-1 mb-6 text-sm text-muted-foreground">
-        科学で進む研究ツリー（文明の興亡基準）。ひらめき条件を満たすと必要科学が半減します。
-        バビロンはひらめき達成で技術が即解禁されるため、各ひらめきが攻略の鍵になります。
+        科学で進む研究ツリー（文明の興亡基準）。ひらめき条件を満たすと、その技術に必要な科学力が軽減されます。
       </p>
       <ResearchTree nodes={TECHNOLOGIES} />
     </main>
