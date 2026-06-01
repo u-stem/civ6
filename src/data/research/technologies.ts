@@ -1,21 +1,19 @@
 import type { ResearchNode } from "@/lib/schema";
 
 // テクノロジーツリー(文明の興亡基準。GS 固有要素は含まない)。
-// 出典(2026-06 時点で確認): CivFanatics https://civfanatics.com/civ6/info/technology/
-// 補正方針:
-// - 名称・条件はゲーム内日本語訳に依存せず、英語原文から正確に日本語化(英語名 nameEn を併記)。
-// - 「資源タイルに鉱山/油井」系や条件のノイズ("0" 表記・自己参照)は正しい英語条件へ補正。
-// - 後半技術の一部(Rocketry / Satellites / Lasers / Stealth Technology / Nuclear Fission /
-//   Nuclear Fusion / Guidance Systems / Synthetic Materials)は資料間で条件が食い違い確証が
-//   取れないため、ひらめき(技術ブースト)を省略している(推測で埋めない)。
-// - ひらめきを持たない技術(Pottery / Animal Husbandry / Mining / Future Tech)は boost なし。
+// 名称・解禁物は Civilopedia 日本語版(公式準拠)で全件照合した正式名称。英語名 nameEn を併記。
+//   出典: https://www.civilopedia.net/ja/rise-and-fall/technologies/tech_*
+// ひらめき条件は英語一次情報(CivFanatics)+ Civilopedia 日本語で確認。
+//   ロケット工学/人工衛星/レーザー/ステルス技術/核分裂/核融合 は固有のひらめきが無く
+//   (大科学者・スパイで汎用ブースト)、boost を持たない。
+// cost/prerequisites は CivFanatics(英語版)基準の数値を維持。
 export const technologies = [
-  // --- 古代 ---
+  // --- 太古 ---
   {
     id: "tech-pottery",
     kind: "tech",
     nameEn: "Pottery",
-    nameJa: "陶器",
+    nameJa: "陶磁器",
     era: "ancient",
     cost: 25,
     prerequisites: [],
@@ -32,18 +30,14 @@ export const technologies = [
     unlocks: [
       { type: "improvement", nameEn: "Pasture", nameJa: "牧草地" },
       { type: "improvement", nameEn: "Camp", nameJa: "キャンプ" },
-      {
-        type: "other",
-        nameEn: "Reveals Horses",
-        nameJa: "資源「馬」を発見可能にする",
-      },
+      { type: "other", nameEn: "Reveals Horses", nameJa: "馬を発見可能にする" },
     ],
   },
   {
     id: "tech-mining",
     kind: "tech",
     nameEn: "Mining",
-    nameJa: "採掘",
+    nameJa: "採鉱",
     era: "ancient",
     cost: 25,
     prerequisites: [],
@@ -56,7 +50,7 @@ export const technologies = [
     id: "tech-sailing",
     kind: "tech",
     nameEn: "Sailing",
-    nameJa: "航海術",
+    nameJa: "帆走術",
     era: "ancient",
     cost: 50,
     prerequisites: [],
@@ -65,7 +59,7 @@ export const technologies = [
       conditionJa: "海岸に都市を建設する",
     },
     unlocks: [
-      { type: "unit", nameEn: "Galley", nameJa: "ガレー" },
+      { type: "unit", nameEn: "Galley", nameJa: "ガレー船" },
       { type: "improvement", nameEn: "Fishing Boats", nameJa: "漁船" },
     ],
   },
@@ -83,7 +77,7 @@ export const technologies = [
     },
     unlocks: [
       { type: "district", nameEn: "Holy Site", nameJa: "聖地" },
-      { type: "building", nameEn: "Shrine", nameJa: "祠" },
+      { type: "building", nameEn: "Shrine", nameJa: "社" },
       { type: "wonder", nameEn: "Stonehenge", nameJa: "ストーンヘンジ" },
     ],
   },
@@ -95,12 +89,10 @@ export const technologies = [
     era: "ancient",
     cost: 50,
     prerequisites: ["tech-pottery"],
-    boost: {
-      conditionEn: "Build a Farm",
-      conditionJa: "農場を1つ建設する",
-    },
+    boost: { conditionEn: "Build a Farm", conditionJa: "農場を1つ建設する" },
     unlocks: [
       { type: "improvement", nameEn: "Plantation", nameJa: "プランテーション" },
+      { type: "improvement", nameEn: "Stepwell", nameJa: "階段井戸" },
       { type: "wonder", nameEn: "Hanging Gardens", nameJa: "空中庭園" },
     ],
   },
@@ -116,13 +108,16 @@ export const technologies = [
       conditionEn: "Kill a unit using a Slinger",
       conditionJa: "投石兵でユニットを倒す",
     },
-    unlocks: [{ type: "unit", nameEn: "Archer", nameJa: "弓兵" }],
+    unlocks: [
+      { type: "unit", nameEn: "Archer", nameJa: "弓兵" },
+      { type: "wonder", nameEn: "Temple of Artemis", nameJa: "アルテミス神殿" },
+    ],
   },
   {
     id: "tech-writing",
     kind: "tech",
     nameEn: "Writing",
-    nameJa: "文字",
+    nameJa: "筆記",
     era: "ancient",
     cost: 50,
     prerequisites: ["tech-pottery"],
@@ -148,9 +143,15 @@ export const technologies = [
       conditionJa: "採石場を1つ建設する",
     },
     unlocks: [
-      { type: "building", nameEn: "Ancient Walls", nameJa: "城壁" },
+      { type: "building", nameEn: "Ancient Walls", nameJa: "太古の防壁" },
       { type: "wonder", nameEn: "Pyramids", nameJa: "ピラミッド" },
       { type: "unit", nameEn: "Battering Ram", nameJa: "破城槌" },
+      { type: "improvement", nameEn: "Great Wall", nameJa: "長城" },
+      {
+        type: "other",
+        nameEn: "Reveals Stone",
+        nameJa: "石材を発見可能にする",
+      },
     ],
   },
   {
@@ -169,11 +170,7 @@ export const technologies = [
       { type: "district", nameEn: "Encampment", nameJa: "兵営" },
       { type: "building", nameEn: "Barracks", nameJa: "兵舎" },
       { type: "unit", nameEn: "Spearman", nameJa: "槍兵" },
-      {
-        type: "other",
-        nameEn: "Reveals Iron",
-        nameJa: "資源「鉄」を発見可能にする",
-      },
+      { type: "other", nameEn: "Reveals Iron", nameJa: "鉄を発見可能にする" },
     ],
   },
   {
@@ -184,13 +181,10 @@ export const technologies = [
     era: "ancient",
     cost: 80,
     prerequisites: ["tech-mining"],
-    boost: {
-      conditionEn: "Build a Mine",
-      conditionJa: "鉱山を1つ建設する",
-    },
+    boost: { conditionEn: "Build a Mine", conditionJa: "鉱山を1つ建設する" },
     unlocks: [
-      { type: "building", nameEn: "Water Mill", nameJa: "水車" },
-      { type: "unit", nameEn: "Heavy Chariot", nameJa: "重戦車" },
+      { type: "building", nameEn: "Water Mill", nameJa: "水車小屋" },
+      { type: "unit", nameEn: "Heavy Chariot", nameJa: "重チャリオット" },
     ],
   },
 
@@ -199,7 +193,7 @@ export const technologies = [
     id: "tech-celestial-navigation",
     kind: "tech",
     nameEn: "Celestial Navigation",
-    nameJa: "天測航法",
+    nameJa: "天文航法",
     era: "classical",
     cost: 120,
     prerequisites: ["tech-sailing", "tech-astrology"],
@@ -210,11 +204,7 @@ export const technologies = [
     unlocks: [
       { type: "district", nameEn: "Harbor", nameJa: "港" },
       { type: "building", nameEn: "Lighthouse", nameJa: "灯台" },
-      {
-        type: "wonder",
-        nameEn: "Great Lighthouse",
-        nameJa: "アレクサンドリアの大灯台",
-      },
+      { type: "wonder", nameEn: "Great Lighthouse", nameJa: "ファロス灯台" },
     ],
   },
   {
@@ -248,7 +238,7 @@ export const technologies = [
     },
     unlocks: [
       { type: "building", nameEn: "Stable", nameJa: "厩舎" },
-      { type: "unit", nameEn: "Horseman", nameJa: "騎兵" },
+      { type: "unit", nameEn: "Horseman", nameJa: "騎乗兵" },
     ],
   },
   {
@@ -275,11 +265,11 @@ export const technologies = [
     prerequisites: ["tech-sailing"],
     boost: {
       conditionEn: "Own 2 Galleys",
-      conditionJa: "ガレーを2隻保有する",
+      conditionJa: "ガレー船を2隻保有する",
     },
     unlocks: [
-      { type: "unit", nameEn: "Quadrireme", nameJa: "クアドリレーム" },
-      { type: "wonder", nameEn: "Colossus", nameJa: "ロードス島の巨像" },
+      { type: "unit", nameEn: "Quadrireme", nameJa: "カドリレーム" },
+      { type: "wonder", nameEn: "Colossus", nameJa: "ロードス島の巨神像" },
     ],
   },
   {
@@ -300,13 +290,13 @@ export const technologies = [
     id: "tech-construction",
     kind: "tech",
     nameEn: "Construction",
-    nameJa: "建築",
+    nameJa: "建築学",
     era: "classical",
     cost: 200,
     prerequisites: ["tech-masonry", "tech-horseback-riding"],
     boost: {
       conditionEn: "Build a Water Mill",
-      conditionJa: "水車を建設する",
+      conditionJa: "水車小屋を建設する",
     },
     unlocks: [
       { type: "wonder", nameEn: "Terracotta Army", nameJa: "兵馬俑" },
@@ -323,10 +313,10 @@ export const technologies = [
     prerequisites: ["tech-the-wheel"],
     boost: {
       conditionEn: "Build Ancient Walls",
-      conditionJa: "城壁を建設する",
+      conditionJa: "太古の防壁を建設する",
     },
     unlocks: [
-      { type: "district", nameEn: "Aqueduct", nameJa: "水道" },
+      { type: "district", nameEn: "Aqueduct", nameJa: "用水路" },
       { type: "unit", nameEn: "Catapult", nameJa: "カタパルト" },
     ],
   },
@@ -336,7 +326,7 @@ export const technologies = [
     id: "tech-military-tactics",
     kind: "tech",
     nameEn: "Military Tactics",
-    nameJa: "軍事戦術",
+    nameJa: "戦術",
     era: "medieval",
     cost: 300,
     prerequisites: ["tech-mathematics"],
@@ -357,26 +347,24 @@ export const technologies = [
     era: "medieval",
     cost: 300,
     prerequisites: ["tech-currency", "tech-horseback-riding"],
-    boost: {
-      conditionEn: "Own 3 Mines",
-      conditionJa: "鉱山を3つ保有する",
-    },
+    boost: { conditionEn: "Own 3 Mines", conditionJa: "鉱山を3つ保有する" },
     unlocks: [
       { type: "district", nameEn: "Industrial Zone", nameJa: "工業地帯" },
       { type: "building", nameEn: "Workshop", nameJa: "工房" },
+      { type: "unit", nameEn: "Men-at-Arms", nameJa: "メンアットアームズ" },
     ],
   },
   {
     id: "tech-stirrups",
     kind: "tech",
     nameEn: "Stirrups",
-    nameJa: "鐙",
+    nameJa: "あぶみ",
     era: "medieval",
     cost: 300,
     prerequisites: ["tech-horseback-riding"],
     boost: {
       conditionEn: "Adopt the Feudalism civic",
-      conditionJa: "社会制度「封建制」を採用する",
+      conditionJa: "社会制度「封建制度」を採用する",
     },
     unlocks: [{ type: "unit", nameEn: "Knight", nameJa: "騎士" }],
   },
@@ -388,13 +376,11 @@ export const technologies = [
     era: "medieval",
     cost: 300,
     prerequisites: ["tech-iron-working", "tech-engineering"],
-    boost: {
-      conditionEn: "Own 3 Archers",
-      conditionJa: "弓兵を3体保有する",
-    },
+    boost: { conditionEn: "Own 3 Archers", conditionJa: "弓兵を3体保有する" },
     unlocks: [
       { type: "improvement", nameEn: "Lumber Mill", nameJa: "製材所" },
       { type: "unit", nameEn: "Crossbowman", nameJa: "弩兵" },
+      { type: "wonder", nameEn: "Kilwa Kisiwani", nameJa: "キルワ・キシワニ" },
     ],
   },
   {
@@ -411,7 +397,11 @@ export const technologies = [
     },
     unlocks: [
       { type: "building", nameEn: "University", nameJa: "大学" },
-      { type: "wonder", nameEn: "Hagia Sophia", nameJa: "アヤソフィア" },
+      {
+        type: "wonder",
+        nameEn: "Hagia Sophia",
+        nameJa: "ハギア・ソフィア聖堂",
+      },
     ],
   },
   {
@@ -428,14 +418,14 @@ export const technologies = [
     },
     unlocks: [
       { type: "building", nameEn: "Armory", nameJa: "武器庫" },
-      { type: "unit", nameEn: "Military Engineer", nameJa: "軍事技術者" },
+      { type: "unit", nameEn: "Military Engineer", nameJa: "工兵" },
     ],
   },
   {
     id: "tech-castles",
     kind: "tech",
     nameEn: "Castles",
-    nameJa: "城郭",
+    nameJa: "城",
     era: "medieval",
     cost: 390,
     prerequisites: ["tech-construction"],
@@ -444,7 +434,7 @@ export const technologies = [
       conditionJa: "政策スロットを6つ持つ",
     },
     unlocks: [
-      { type: "building", nameEn: "Castle", nameJa: "城" },
+      { type: "building", nameEn: "Medieval Walls", nameJa: "中世の防壁" },
       { type: "wonder", nameEn: "Alhambra", nameJa: "アルハンブラ宮殿" },
     ],
   },
@@ -454,7 +444,7 @@ export const technologies = [
     id: "tech-cartography",
     kind: "tech",
     nameEn: "Cartography",
-    nameJa: "地図作成",
+    nameJa: "地図製作法",
     era: "renaissance",
     cost: 540,
     prerequisites: ["tech-shipbuilding"],
@@ -462,7 +452,7 @@ export const technologies = [
       conditionEn: "Build 2 Harbor districts",
       conditionJa: "港区域を2つ建設する",
     },
-    unlocks: [{ type: "unit", nameEn: "Caravel", nameJa: "キャラベル" }],
+    unlocks: [{ type: "unit", nameEn: "Caravel", nameJa: "キャラベル船" }],
   },
   {
     id: "tech-mass-production",
@@ -481,7 +471,7 @@ export const technologies = [
       {
         type: "wonder",
         nameEn: "Venetian Arsenal",
-        nameJa: "ヴェネツィアの造船所",
+        nameJa: "アルセナーレ・ディ・ヴェネツィア",
       },
     ],
   },
@@ -489,7 +479,7 @@ export const technologies = [
     id: "tech-banking",
     kind: "tech",
     nameEn: "Banking",
-    nameJa: "銀行",
+    nameJa: "銀行制度",
     era: "renaissance",
     cost: 540,
     prerequisites: ["tech-stirrups", "tech-education"],
@@ -502,7 +492,7 @@ export const technologies = [
       {
         type: "wonder",
         nameEn: "Great Zimbabwe",
-        nameJa: "グレート・ジンバブエ",
+        nameJa: "グレート・ジンバブエ遺跡",
       },
     ],
   },
@@ -518,16 +508,13 @@ export const technologies = [
       "tech-stirrups",
       "tech-military-engineering",
     ],
-    boost: {
-      conditionEn: "Build an Armory",
-      conditionJa: "武器庫を建設する",
-    },
+    boost: { conditionEn: "Build an Armory", conditionJa: "武器庫を建設する" },
     unlocks: [
-      { type: "unit", nameEn: "Musketman", nameJa: "マスケット兵" },
+      { type: "unit", nameEn: "Musketman", nameJa: "マスケット銃兵" },
       {
         type: "other",
         nameEn: "Reveals Niter",
-        nameJa: "資源「硝石」を発見可能にする",
+        nameJa: "硝石を発見可能にする",
       },
     ],
   },
@@ -549,15 +536,15 @@ export const technologies = [
     id: "tech-square-rigging",
     kind: "tech",
     nameEn: "Square Rigging",
-    nameJa: "横帆装備",
+    nameJa: "横帆船",
     era: "renaissance",
     cost: 660,
     prerequisites: ["tech-cartography"],
     boost: {
       conditionEn: "Kill a unit using a Musketman",
-      conditionJa: "マスケット兵でユニットを倒す",
+      conditionJa: "マスケット銃兵でユニットを倒す",
     },
-    unlocks: [{ type: "unit", nameEn: "Frigate", nameJa: "フリゲート" }],
+    unlocks: [{ type: "unit", nameEn: "Frigate", nameJa: "フリゲート艦" }],
   },
   {
     id: "tech-astronomy",
@@ -569,7 +556,7 @@ export const technologies = [
     prerequisites: ["tech-education"],
     boost: {
       conditionEn: "Build a University adjacent to a Mountain",
-      conditionJa: "山岳に隣接した大学を建設する",
+      conditionJa: "山岳に隣接したタイルに大学を建設する",
     },
     unlocks: [{ type: "wonder", nameEn: "Potala Palace", nameJa: "ポタラ宮" }],
   },
@@ -577,7 +564,7 @@ export const technologies = [
     id: "tech-metal-casting",
     kind: "tech",
     nameEn: "Metal Casting",
-    nameJa: "金属鋳造",
+    nameJa: "鋳造",
     era: "renaissance",
     cost: 660,
     prerequisites: ["tech-gunpowder"],
@@ -585,21 +572,28 @@ export const technologies = [
       conditionEn: "Own 2 Crossbowmen",
       conditionJa: "弩兵を2体保有する",
     },
-    unlocks: [{ type: "unit", nameEn: "Bombard", nameJa: "ボンバード" }],
+    unlocks: [{ type: "unit", nameEn: "Bombard", nameJa: "射石砲" }],
   },
   {
     id: "tech-siege-tactics",
     kind: "tech",
     nameEn: "Siege Tactics",
-    nameJa: "攻城戦術",
+    nameJa: "攻囲戦術",
     era: "renaissance",
     cost: 660,
     prerequisites: ["tech-castles"],
     boost: {
       conditionEn: "Own 2 Bombards",
-      conditionJa: "ボンバードを2体保有する",
+      conditionJa: "射石砲を2体保有する",
     },
-    unlocks: [{ type: "improvement", nameEn: "Fort", nameJa: "要塞" }],
+    unlocks: [
+      {
+        type: "building",
+        nameEn: "Renaissance Walls",
+        nameJa: "ルネサンス時代の防壁",
+      },
+      { type: "improvement", nameEn: "Fort", nameJa: "要塞" },
+    ],
   },
 
   // --- 産業 ---
@@ -611,10 +605,7 @@ export const technologies = [
     era: "industrial",
     cost: 805,
     prerequisites: ["tech-mass-production"],
-    boost: {
-      conditionEn: "Own 3 Workshops",
-      conditionJa: "工房を3つ保有する",
-    },
+    boost: { conditionEn: "Own 3 Workshops", conditionJa: "工房を3つ保有する" },
     unlocks: [
       { type: "building", nameEn: "Factory", nameJa: "工場" },
       { type: "wonder", nameEn: "Ruhr Valley", nameJa: "ルール地方" },
@@ -648,17 +639,14 @@ export const technologies = [
     era: "industrial",
     cost: 805,
     prerequisites: ["tech-metal-casting"],
-    boost: {
-      conditionEn: "Own 2 Forts",
-      conditionJa: "要塞を2つ保有する",
-    },
+    boost: { conditionEn: "Own 2 Forts", conditionJa: "要塞を2つ保有する" },
     unlocks: [{ type: "unit", nameEn: "Field Cannon", nameJa: "野戦砲" }],
   },
   {
     id: "tech-military-science",
     kind: "tech",
     nameEn: "Military Science",
-    nameJa: "軍事科学",
+    nameJa: "軍事学",
     era: "industrial",
     cost: 805,
     prerequisites: ["tech-printing", "tech-siege-tactics"],
@@ -668,7 +656,7 @@ export const technologies = [
     },
     unlocks: [
       { type: "building", nameEn: "Military Academy", nameJa: "士官学校" },
-      { type: "unit", nameEn: "Cavalry", nameJa: "騎兵(近代)" },
+      { type: "unit", nameEn: "Cavalry", nameJa: "騎兵" },
     ],
   },
   {
@@ -681,32 +669,28 @@ export const technologies = [
     prerequisites: ["tech-square-rigging", "tech-industrialization"],
     boost: {
       conditionEn: "Own 2 Shipyards",
-      conditionJa: "造船所を2つ保有する",
+      conditionJa: "造船所を2つ建設する",
     },
     unlocks: [
       { type: "unit", nameEn: "Ironclad", nameJa: "装甲艦" },
-      {
-        type: "other",
-        nameEn: "Reveals Coal",
-        nameJa: "資源「石炭」を発見可能にする",
-      },
+      { type: "other", nameEn: "Reveals Coal", nameJa: "石炭を発見可能にする" },
     ],
   },
   {
     id: "tech-sanitation",
     kind: "tech",
     nameEn: "Sanitation",
-    nameJa: "衛生",
+    nameJa: "公衆衛生",
     era: "industrial",
     cost: 925,
     prerequisites: ["tech-scientific-theory"],
     boost: {
       conditionEn: "Build 2 Aqueducts",
-      conditionJa: "水道を2つ建設する",
+      conditionJa: "用水路を2つ建設する",
     },
     unlocks: [
-      { type: "district", nameEn: "Neighborhood", nameJa: "近隣住区" },
       { type: "building", nameEn: "Sewer", nameJa: "下水道" },
+      { type: "unit", nameEn: "Medic", nameJa: "衛生兵" },
     ],
   },
   {
@@ -717,10 +701,7 @@ export const technologies = [
     era: "industrial",
     cost: 925,
     prerequisites: ["tech-banking", "tech-scientific-theory"],
-    boost: {
-      conditionEn: "Own 2 Banks",
-      conditionJa: "銀行を2つ保有する",
-    },
+    boost: { conditionEn: "Own 2 Banks", conditionJa: "銀行を2つ保有する" },
     unlocks: [
       { type: "building", nameEn: "Stock Exchange", nameJa: "証券取引所" },
       { type: "wonder", nameEn: "Big Ben", nameJa: "ビッグ・ベン" },
@@ -730,7 +711,7 @@ export const technologies = [
     id: "tech-rifling",
     kind: "tech",
     nameEn: "Rifling",
-    nameJa: "施条(ライフリング)",
+    nameJa: "ライフリング",
     era: "industrial",
     cost: 925,
     prerequisites: ["tech-ballistics", "tech-military-science"],
@@ -746,7 +727,7 @@ export const technologies = [
     id: "tech-flight",
     kind: "tech",
     nameEn: "Flight",
-    nameJa: "飛行",
+    nameJa: "航空技術",
     era: "modern",
     cost: 1035,
     prerequisites: ["tech-industrialization", "tech-scientific-theory"],
@@ -756,20 +737,22 @@ export const technologies = [
     },
     unlocks: [
       { type: "district", nameEn: "Aerodrome", nameJa: "飛行場" },
+      { type: "building", nameEn: "Hangar", nameJa: "格納庫" },
       { type: "unit", nameEn: "Biplane", nameJa: "複葉機" },
+      { type: "improvement", nameEn: "Airstrip", nameJa: "滑走路" },
     ],
   },
   {
     id: "tech-replaceable-parts",
     kind: "tech",
     nameEn: "Replaceable Parts",
-    nameJa: "互換部品",
+    nameJa: "共通規格",
     era: "modern",
     cost: 1035,
     prerequisites: ["tech-economics"],
     boost: {
       conditionEn: "Own 3 Musketmen",
-      conditionJa: "マスケット兵を3体保有する",
+      conditionJa: "マスケット銃兵を3体保有する",
     },
     unlocks: [{ type: "unit", nameEn: "Infantry", nameJa: "歩兵" }],
   },
@@ -777,7 +760,7 @@ export const technologies = [
     id: "tech-steel",
     kind: "tech",
     nameEn: "Steel",
-    nameJa: "製鋼",
+    nameJa: "鉄鋼",
     era: "modern",
     cost: 1035,
     prerequisites: ["tech-ballistics"],
@@ -787,7 +770,7 @@ export const technologies = [
     },
     unlocks: [
       { type: "wonder", nameEn: "Eiffel Tower", nameJa: "エッフェル塔" },
-      { type: "unit", nameEn: "Artillery", nameJa: "火砲" },
+      { type: "unit", nameEn: "Artillery", nameJa: "大砲" },
       { type: "unit", nameEn: "Battleship", nameJa: "戦艦" },
     ],
   },
@@ -805,7 +788,7 @@ export const technologies = [
     },
     unlocks: [
       { type: "building", nameEn: "Power Plant", nameJa: "発電所" },
-      { type: "building", nameEn: "Seaport", nameJa: "海港" },
+      { type: "building", nameEn: "Seaport", nameJa: "港湾" },
       { type: "unit", nameEn: "Submarine", nameJa: "潜水艦" },
     ],
   },
@@ -828,6 +811,11 @@ export const technologies = [
         nameEn: "Seaside Resort",
         nameJa: "シーサイドリゾート",
       },
+      {
+        type: "other",
+        nameEn: "Reveals Aluminum",
+        nameJa: "アルミニウムを発見可能にする",
+      },
     ],
   },
   {
@@ -842,7 +830,10 @@ export const technologies = [
       conditionEn: "Have a Research Agreement",
       conditionJa: "共同研究協定を結ぶ",
     },
-    unlocks: [{ type: "building", nameEn: "Research Lab", nameJa: "研究所" }],
+    unlocks: [
+      { type: "building", nameEn: "Research Lab", nameJa: "研究所" },
+      { type: "unit", nameEn: "AT Crew", nameJa: "対戦車兵" },
+    ],
   },
   {
     id: "tech-combustion",
@@ -859,11 +850,7 @@ export const technologies = [
     unlocks: [
       { type: "improvement", nameEn: "Oil Well", nameJa: "油井" },
       { type: "unit", nameEn: "Tank", nameJa: "戦車" },
-      {
-        type: "other",
-        nameEn: "Reveals Oil",
-        nameJa: "資源「石油」を発見可能にする",
-      },
+      { type: "other", nameEn: "Reveals Oil", nameJa: "石油を発見可能にする" },
     ],
   },
 
@@ -872,23 +859,18 @@ export const technologies = [
     id: "tech-advanced-flight",
     kind: "tech",
     nameEn: "Advanced Flight",
-    nameJa: "高等飛行",
+    nameJa: "高度な航空技術",
     era: "atomic",
     cost: 1225,
     prerequisites: ["tech-radio"],
     boost: {
       conditionEn: "Own 3 Biplanes",
-      conditionJa: "複葉機を3機保有する",
+      conditionJa: "複葉機を3機生産する",
     },
     unlocks: [
       { type: "building", nameEn: "Airport", nameJa: "空港" },
       { type: "unit", nameEn: "Fighter", nameJa: "戦闘機" },
       { type: "unit", nameEn: "Bomber", nameJa: "爆撃機" },
-      {
-        type: "other",
-        nameEn: "Reveals Aluminum",
-        nameJa: "資源「アルミニウム」を発見可能にする",
-      },
     ],
   },
   {
@@ -899,21 +881,32 @@ export const technologies = [
     era: "atomic",
     cost: 1225,
     prerequisites: ["tech-radio", "tech-chemistry"],
-    unlocks: [{ type: "district", nameEn: "Spaceport", nameJa: "宇宙港" }],
+    unlocks: [
+      { type: "district", nameEn: "Spaceport", nameJa: "宇宙船基地" },
+      { type: "improvement", nameEn: "Missile Silo", nameJa: "ミサイル格納庫" },
+      {
+        type: "project",
+        nameEn: "Launch Earth Satellite",
+        nameJa: "人工衛星の打ち上げ",
+      },
+    ],
   },
   {
     id: "tech-advanced-ballistics",
     kind: "tech",
     nameEn: "Advanced Ballistics",
-    nameJa: "高等弾道学",
+    nameJa: "高度な弾道学",
     era: "atomic",
     cost: 1225,
     prerequisites: ["tech-replaceable-parts", "tech-steel"],
     boost: {
       conditionEn: "Own 2 Power Plants",
-      conditionJa: "発電所を2つ保有する",
+      conditionJa: "発電所を2つ建設する",
     },
-    unlocks: [{ type: "unit", nameEn: "Machine Gun", nameJa: "機関銃" }],
+    unlocks: [
+      { type: "unit", nameEn: "Machine Gun", nameJa: "機関銃" },
+      { type: "unit", nameEn: "AntiAir Gun", nameJa: "対空砲" },
+    ],
   },
   {
     id: "tech-combined-arms",
@@ -924,8 +917,8 @@ export const technologies = [
     cost: 1225,
     prerequisites: ["tech-steel", "tech-combustion"],
     boost: {
-      conditionEn: "Build an Airstrip",
-      conditionJa: "滑走路を建設する",
+      conditionEn: "Have 3 Corps or Fleets",
+      conditionJa: "大軍団または大艦隊を3つ所有する",
     },
     unlocks: [
       { type: "unit", nameEn: "Aircraft Carrier", nameJa: "空母" },
@@ -940,12 +933,13 @@ export const technologies = [
     era: "atomic",
     cost: 1225,
     prerequisites: ["tech-combustion"],
-    boost: {
-      conditionEn: "Build an Oil Well on a tile with Oil",
-      conditionJa: "石油資源のあるタイルに油井を建設する",
-    },
+    boost: { conditionEn: "Build an Oil Well", conditionJa: "油井を建設する" },
     unlocks: [
-      { type: "improvement", nameEn: "Offshore Oil Rig", nameJa: "海底油田" },
+      {
+        type: "improvement",
+        nameEn: "Offshore Oil Rig",
+        nameJa: "洋上プラットフォーム",
+      },
     ],
   },
   {
@@ -957,10 +951,11 @@ export const technologies = [
     cost: 1375,
     prerequisites: ["tech-electricity"],
     boost: {
-      conditionEn: "Have 8 policy slots",
-      conditionJa: "政策スロットを8つ持つ",
+      conditionEn: "Have a government with 8 policy slots",
+      conditionJa: "政策スロットを8つ持つ政府を所有する",
     },
     unlocks: [
+      { type: "unit", nameEn: "Drone", nameJa: "ドローン" },
       {
         type: "other",
         nameEn: "+100% tourism from Great Works",
@@ -978,9 +973,14 @@ export const technologies = [
     prerequisites: ["tech-advanced-ballistics", "tech-combined-arms"],
     unlocks: [
       {
+        type: "project",
+        nameEn: "Manhattan Project",
+        nameJa: "マンハッタン計画",
+      },
+      {
         type: "other",
         nameEn: "Reveals Uranium",
-        nameJa: "資源「ウラン」を発見可能にする",
+        nameJa: "ウランを発見可能にする",
       },
     ],
   },
@@ -988,10 +988,14 @@ export const technologies = [
     id: "tech-synthetic-materials",
     kind: "tech",
     nameEn: "Synthetic Materials",
-    nameJa: "合成素材",
+    nameJa: "化学合成物質",
     era: "atomic",
     cost: 1375,
     prerequisites: ["tech-plastics"],
+    boost: {
+      conditionEn: "Build 2 Aerodromes",
+      conditionJa: "飛行場を2つ建設する",
+    },
     unlocks: [{ type: "unit", nameEn: "Helicopter", nameJa: "ヘリコプター" }],
   },
 
@@ -1006,7 +1010,7 @@ export const technologies = [
     prerequisites: ["tech-computers"],
     boost: {
       conditionEn: "Own 2 Broadcast Centers",
-      conditionJa: "放送センターを2つ保有する",
+      conditionJa: "放送センターを2つ建設する",
     },
     unlocks: [
       { type: "unit", nameEn: "Nuclear Submarine", nameJa: "原子力潜水艦" },
@@ -1022,19 +1026,28 @@ export const technologies = [
     prerequisites: ["tech-advanced-flight", "tech-rocketry"],
     unlocks: [
       { type: "unit", nameEn: "Mechanized Infantry", nameJa: "機械化歩兵" },
+      {
+        type: "project",
+        nameEn: "Launch Moon Landing",
+        nameJa: "月面着陸船の打ち上げ",
+      },
     ],
   },
   {
     id: "tech-guidance-systems",
     kind: "tech",
     nameEn: "Guidance Systems",
-    nameJa: "誘導装置",
+    nameJa: "誘導システム",
     era: "information",
     cost: 1540,
     prerequisites: ["tech-rocketry", "tech-advanced-ballistics"],
+    boost: {
+      conditionEn: "Shoot down an enemy aircraft with a Fighter",
+      conditionJa: "戦闘機を撃ち落とす",
+    },
     unlocks: [
       { type: "unit", nameEn: "Rocket Artillery", nameJa: "ロケット砲" },
-      { type: "unit", nameEn: "Mobile SAM", nameJa: "移動式対空ミサイル" },
+      { type: "unit", nameEn: "Mobile SAM", nameJa: "自走式地対空ミサイル" },
     ],
   },
   {
@@ -1054,15 +1067,15 @@ export const technologies = [
     id: "tech-composites",
     kind: "tech",
     nameEn: "Composites",
-    nameJa: "複合材料",
+    nameJa: "合成物",
     era: "information",
     cost: 1540,
     prerequisites: ["tech-synthetic-materials"],
-    boost: {
-      conditionEn: "Own 3 Tanks",
-      conditionJa: "戦車を3両保有する",
-    },
-    unlocks: [{ type: "unit", nameEn: "Modern Armor", nameJa: "現代機甲" }],
+    boost: { conditionEn: "Own 3 Tanks", conditionJa: "戦車を3両所有する" },
+    unlocks: [
+      { type: "unit", nameEn: "Modern AT", nameJa: "近代的対戦車兵" },
+      { type: "unit", nameEn: "Modern Armor", nameJa: "近代的機甲部隊" },
+    ],
   },
   {
     id: "tech-stealth-technology",
@@ -1083,10 +1096,16 @@ export const technologies = [
     cost: 1795,
     prerequisites: ["tech-computers"],
     boost: {
-      conditionEn: "Adopt the Globalization civic",
-      conditionJa: "社会制度「グローバリゼーション」を採用する",
+      conditionEn: "Unlock the Globalization civic",
+      conditionJa: "社会制度「グローバル化」を獲得する",
     },
-    unlocks: [],
+    unlocks: [
+      {
+        type: "project",
+        nameEn: "Launch Mars Habitation",
+        nameJa: "火星入植用居住モジュールの打ち上げ",
+      },
+    ],
   },
   {
     id: "tech-nanotechnology",
@@ -1098,9 +1117,15 @@ export const technologies = [
     prerequisites: ["tech-composites"],
     boost: {
       conditionEn: "Build a Mine on a tile with Aluminum",
-      conditionJa: "アルミニウム資源のあるタイルに鉱山を建設する",
+      conditionJa: "アルミニウム鉱山を建設する",
     },
-    unlocks: [],
+    unlocks: [
+      {
+        type: "project",
+        nameEn: "Launch Mars Hydroponics",
+        nameJa: "火星入植用水耕モジュールの打ち上げ",
+      },
+    ],
   },
   {
     id: "tech-nuclear-fusion",
@@ -1110,7 +1135,13 @@ export const technologies = [
     era: "information",
     cost: 1795,
     prerequisites: ["tech-lasers"],
-    unlocks: [],
+    unlocks: [
+      {
+        type: "project",
+        nameEn: "Launch Mars Reactor",
+        nameJa: "火星入植用原子炉モジュールの打ち上げ",
+      },
+    ],
   },
   {
     id: "tech-future-tech",

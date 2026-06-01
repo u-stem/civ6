@@ -24,7 +24,7 @@ export const PHASE_LABELS: Record<GamePhase, string> = {
 };
 
 export const ERA_LABELS: Record<Era, string> = {
-  ancient: "古代",
+  ancient: "太古",
   classical: "古典",
   medieval: "中世",
   renaissance: "ルネサンス",

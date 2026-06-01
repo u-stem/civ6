@@ -20,7 +20,7 @@ export const CULTURE_GUIDE = `文化勝利の条件は「自分の外国人観�
 バビロン視点: 科学が50%減でも文化による社会制度の進行は通常どおり。劇場広場・社会制度ツリーを軸にした文化路線は科学ペナルティの影響を受けにくく、ハンムラビの無償建物で区域の立ち上げも速い。`;
 
 export const cultureFragments = [
-  // --- 序盤(古代〜古典) ---
+  // --- 序盤(太古〜古典) ---
   {
     id: "culture-early-monument",
     title: "各都市に記念碑を建てて文化を伸ばす",
@@ -48,7 +48,7 @@ export const cultureFragments = [
     id: "culture-early-theater-babylon",
     title: "劇場広場を建設(ハンムラビの無償建物を活用)",
     detail:
-      "専門区域を初めて建設するとニヌ・イル・シルムで最安建物(劇場広場なら円形劇場)が無償。劇場広場は大著作スロットと偉人ポイントの起点になる。早めに各種区域を1つずつ建てて無償建物を回収するのが効率的。",
+      "専門区域を初めて建設するとニヌ・イル・シルムで最安建物(劇場広場なら円形闘技場)が無償。劇場広場は大著作スロットと偉人ポイントの起点になる。早めに各種区域を1つずつ建てて無償建物を回収するのが効率的。",
     phase: "early",
     applies: { victories: ["culture"], civs: ["babylon"] },
     priority: 30,
@@ -58,9 +58,9 @@ export const cultureFragments = [
   },
   {
     id: "culture-early-pingala-connoisseur",
-    title: "総督ピンガラをコニサーで劇場広場の都市へ配属",
+    title: "総督ピンガラを目利きで劇場広場の都市へ配属",
     detail:
-      "ピンガラのコニサー(Connoisseur, Lv1)は劇場広場建物の生産+20%、市民1人あたり文化+1。文化生産の中心都市に置く。(文明の興亡で利用可能)",
+      "ピンガラの目利き(Connoisseur, Lv1)は劇場広場建物の生産+20%、市民1人あたり文化+1。文化生産の中心都市に置く。(文明の興亡で利用可能)",
     phase: "early",
     applies: { victories: ["culture"], minRuleset: "rise-and-fall" },
     priority: 40,
@@ -82,9 +82,9 @@ export const cultureFragments = [
   // --- 中盤(中世〜ルネサンス) ---
   {
     id: "culture-mid-museums",
-    title: "美術博物館と考古学博物館を建てる",
+    title: "美術館と考古博物館を建てる",
     detail:
-      "劇場広場に美術博物館(絵画3枠)と考古学博物館(遺物3枠)を建て、大著作物・遺物の収蔵枠を確保する。観光力の器を一気に広げる工程。",
+      "劇場広場に美術館(絵画3枠)と考古博物館(遺物3枠)を建て、大著作物・遺物の収蔵枠を確保する。観光力の器を一気に広げる工程。",
     phase: "mid",
     applies: { victories: ["culture"] },
     priority: 10,
@@ -107,7 +107,7 @@ export const cultureFragments = [
     id: "culture-mid-archaeology",
     title: "考古学者を育成し遺物を発掘する",
     detail:
-      "考古学博物館から考古学者を生産し、古戦場・難破船などから遺物(Artifacts)を発掘して博物館に収める。遺物は観光力源かつテーマ成立に使える。",
+      "考古博物館から考古学者を生産し、古戦場・難破船などから遺物(Artifacts)を発掘して博物館に収める。遺物は観光力源かつテーマ成立に使える。",
     phase: "mid",
     applies: { victories: ["culture"] },
     priority: 30,
@@ -185,9 +185,9 @@ export const cultureFragments = [
   },
   {
     id: "culture-late-curator",
-    title: "ピンガラをキュレーターに昇進(大著作物の観光力2倍)",
+    title: "ピンガラを学芸員に昇進(大著作物の観光力2倍)",
     detail:
-      "キュレーター(Curator)は配属都市の大著作物の観光力を2倍にする、文化勝利の決め手。ただし「嵐の訪れ(GS)」専用の昇進で、文明の興亡では利用できない。",
+      "学芸員(Curator)は配属都市の大著作物の観光力を2倍にする、文化勝利の決め手。ただし「嵐の訪れ(GS)」専用の昇進で、文明の興亡では利用できない。",
     phase: "late",
     applies: { victories: ["culture"], minRuleset: "gathering-storm" },
     priority: 40,
