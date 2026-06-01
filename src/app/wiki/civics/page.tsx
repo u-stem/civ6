@@ -15,8 +15,7 @@ export default function CivicsTreePage() {
       </Button>
       <h1 className="text-2xl font-semibold tracking-tight">社会制度ツリー</h1>
       <p className="mt-1 mb-6 text-sm text-muted-foreground">
-        文化で進む研究ツリー（文明の興亡基準）。天啓条件を満たすと必要文化が半減します。
-        政府・政策カード・劇場広場などの解禁元で、文化勝利の土台になります。
+        文化で進む研究ツリー（文明の興亡基準）。天啓条件を満たすと、その社会制度に必要な文化力が軽減されます。政府・政策カードもここで解禁されます。
       </p>
       <ResearchTree nodes={CIVICS} />
     </main>
