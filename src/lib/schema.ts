@@ -66,36 +66,7 @@ export const GAME_MODES = [
 export const GameModeSchema = z.enum(GAME_MODES);
 export type GameMode = z.infer<typeof GameModeSchema>;
 
-// タスク断片の適用条件。
-export const AppliesSchema = z.object({
-  // 対象勝利条件。"any" は勝利条件非依存(内政基盤など)。
-  victories: z.union([z.array(VictoryTypeSchema), z.literal("any")]),
-  // 文明限定。省略時は全文明汎用。
-  civs: z.array(z.string()).optional(),
-  // この拡張以上で出現(総督・忠誠心など R&F 要素の分岐)。
-  minRuleset: RulesetSchema.optional(),
-  // 特定モード前提。
-  requiresModes: z.array(GameModeSchema).optional(),
-});
-export type Applies = z.infer<typeof AppliesSchema>;
-
-// ルールベース合成の最小単位。
-export const TaskFragmentSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  detail: z.string().optional(),
-  phase: GamePhaseSchema,
-  applies: AppliesSchema,
-  priority: z.number(),
-  targetEra: EraSchema.optional(),
-  // 標準スピードでのおおよその目安ターン。表示時に speed.ts で各スピードへ換算する。
-  targetTurnStandard: z.number().int().positive().optional(),
-  dependsOn: z.array(z.string()).optional(),
-  tags: z.array(z.string()).optional(),
-});
-export type TaskFragment = z.infer<typeof TaskFragmentSchema>;
-
-// 文明・指導者(wiki / セットアップ用)。
+// 文明・指導者(wiki 用)。
 export const UniqueComponentSchema = z.object({
   name: z.string(),
   replaces: z.string().optional(),
@@ -125,28 +96,6 @@ export const CivilizationSchema = z.object({
   uniqueInfrastructure: z.array(UniqueComponentSchema),
 });
 export type Civilization = z.infer<typeof CivilizationSchema>;
-
-// ユーザーが選ぶゲーム構成。
-export const GameSetupSchema = z.object({
-  civId: z.string(),
-  leaderId: z.string(),
-  victories: z.array(VictoryTypeSchema).min(1),
-  ruleset: RulesetSchema,
-  speed: GameSpeedSchema,
-  modes: z.array(GameModeSchema),
-});
-export type GameSetup = z.infer<typeof GameSetupSchema>;
-
-// 保存される 1 ゲーム(進捗込み)。
-export const SavedGameSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  createdAt: z.string(),
-  setup: GameSetupSchema,
-  checked: z.record(z.string(), z.boolean()),
-  notes: z.record(z.string(), z.string()).optional(),
-});
-export type SavedGame = z.infer<typeof SavedGameSchema>;
 
 // 研究ツリー(テクノロジー / 社会制度)のノード。
 export const RESEARCH_KINDS = ["tech", "civic"] as const;
