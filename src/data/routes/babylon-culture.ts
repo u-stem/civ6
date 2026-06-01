@@ -21,6 +21,8 @@ export const babylonCulture: Route = {
     { key: "workshop", label: "工房" },
     { key: "city", label: "都市" },
     { key: "theater", label: "劇場広場" },
+    { key: "districtTypes", label: "解禁済みの専門区域タイプ数" },
+    { key: "districtsBuilt", label: "建設済みの専門区域数" },
   ],
   flags: [
     { key: "tech.mining", label: "採掘(技術)" },
@@ -329,6 +331,27 @@ export const babylonCulture: Route = {
       label: "隣接ボーナスを意識して区域を置く",
       body: "劇場広場は遺産・区域に隣接させると文化の隣接ボーナス。聖地は山岳・森、キャンパスは山岳・熱帯雨林。配置次第で文化・観光・偉人ポイントが変わる。",
     },
+    {
+      type: "principle",
+      id: "prn-policy-swap",
+      lane: "civic",
+      label: "政策カードは局面で差し替える",
+      body: "社会制度を取得した瞬間は政策の差し替えが無料(以外は金が要る)。遺産を建てる局面はゴシック建築・摩天楼、観光を通す局面は印刷術・自由連盟系へ、社会制度完了のたびに最適化する。",
+    },
+    {
+      type: "principle",
+      id: "prn-faith-use",
+      lane: "civic",
+      label: "信仰力は偉人・自然主義者・ロックバンドへ",
+      body: "文化ルートの信仰力は、大音楽家など文化偉人の購入、国立公園のための自然主義者、終盤のロックバンドに使う。聖地はこの信仰力の供給源として最小限確保する。",
+    },
+    {
+      type: "principle",
+      id: "prn-trade-route",
+      lane: "military",
+      label: "交易路は相手と結んで観光を加速",
+      body: "相手と交易路を結ぶと、その文明から外国人観光客を得る速度が上がる。終盤は内政向けより相手国への交易路を増やし、開かれた国境・宗教一致と合わせて観光を通す。",
+    },
   ],
 
   warnings: [
@@ -372,6 +395,15 @@ export const babylonCulture: Route = {
       when: (s) => s.turn >= 80 && !flag(s, "hero.davinci"),
       message:
         "妨害ライン到達。大技術者ダ・ヴィンチ未確保。偉人ポイント/資金の手当てを確認。",
+    },
+    {
+      id: "w-district-discount",
+      severity: "warn",
+      when: (s) =>
+        s.turn >= 10 &&
+        counter(s, "districtTypes") > counter(s, "districtsBuilt"),
+      message:
+        "解禁済みなのに未建設の専門区域タイプがある。各タイプ最初の1つは割引、かつ区域は置いた時点でコストが固定される。技術を飛ばす前=安いうちに配置(予約)を。",
     },
   ],
 
