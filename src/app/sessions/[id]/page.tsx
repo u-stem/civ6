@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,6 +11,11 @@ import { StateControls } from "@/components/route/StateControls";
 import { WarningBanner } from "@/components/route/WarningBanner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRoute } from "@/data/routes";
 import {
@@ -46,7 +51,7 @@ export default function SessionPage() {
 
   if (!ready) {
     return (
-      <main className="mx-auto max-w-5xl px-5 py-8">
+      <main className="mx-auto max-w-6xl px-5 py-8">
         <Skeleton className="h-40 w-full" />
       </main>
     );
@@ -55,7 +60,7 @@ export default function SessionPage() {
   const route = routeId ? getRoute(routeId) : undefined;
   if (!route || !state) {
     return (
-      <main className="mx-auto max-w-5xl px-5 py-8">
+      <main className="mx-auto max-w-6xl px-5 py-8">
         <p className="text-muted-foreground">
           セッションが見つかりません。
           <Link href="/" className="ml-1 underline">
@@ -70,8 +75,28 @@ export default function SessionPage() {
   const warnings = evaluateWarnings(route, s);
   const phase = currentPhase(route, s);
 
+  const controls = (
+    <StateControls
+      route={route}
+      state={s}
+      onTurn={(d) => commit({ ...s, turn: Math.max(0, s.turn + d) })}
+      onCounter={(key, d) =>
+        commit({
+          ...s,
+          counters: {
+            ...s.counters,
+            [key]: Math.max(0, (s.counters[key] ?? 0) + d),
+          },
+        })
+      }
+      onFlag={(key, value) =>
+        commit({ ...s, flags: { ...s.flags, [key]: value } })
+      }
+    />
+  );
+
   return (
-    <main className="mx-auto max-w-5xl px-5 py-8">
+    <main className="mx-auto max-w-6xl px-5 py-8">
       <Button variant="ghost" size="sm" asChild className="-ml-2 mb-2">
         <Link href="/">
           <ArrowLeft className="size-4" />
@@ -85,46 +110,39 @@ export default function SessionPage() {
         {phase && <Badge variant="outline">{phase.label}</Badge>}
       </div>
 
-      {phase && (
-        <p className="mb-4 text-sm text-muted-foreground">{phase.hint}</p>
-      )}
+      <div className="lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start lg:gap-6">
+        {/* 状態入力: デスクトップは左 sticky、モバイルは折りたたみ */}
+        <aside className="mb-6 lg:mb-0">
+          <div className="hidden lg:block lg:sticky lg:top-4">{controls}</div>
+          <div className="lg:hidden">
+            <Collapsible defaultOpen>
+              <CollapsibleTrigger className="mb-2 flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm font-medium">
+                状態入力
+                <ChevronDown className="size-4" />
+              </CollapsibleTrigger>
+              <CollapsibleContent>{controls}</CollapsibleContent>
+            </Collapsible>
+          </div>
+        </aside>
 
-      <div className="mb-4">
-        <WarningBanner warnings={warnings} />
-      </div>
+        {/* メイン */}
+        <div className="space-y-6">
+          {phase && (
+            <p className="text-sm text-muted-foreground">{phase.hint}</p>
+          )}
 
-      <div className="mb-6">
-        <StateControls
-          route={route}
-          state={s}
-          onTurn={(d) => commit({ ...s, turn: Math.max(0, s.turn + d) })}
-          onCounter={(key, d) =>
-            commit({
-              ...s,
-              counters: {
-                ...s.counters,
-                [key]: Math.max(0, (s.counters[key] ?? 0) + d),
-              },
-            })
-          }
-          onFlag={(key, value) =>
-            commit({ ...s, flags: { ...s.flags, [key]: value } })
-          }
-        />
-      </div>
+          <WarningBanner warnings={warnings} />
 
-      <div className="mb-6">
-        <BranchSection route={route} state={s} />
-      </div>
+          <BranchSection route={route} state={s} />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {LANES.map((lane) => (
-          <LaneColumn key={lane} route={route} lane={lane} state={s} />
-        ))}
-      </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {LANES.map((lane) => (
+              <LaneColumn key={lane} route={route} lane={lane} state={s} />
+            ))}
+          </div>
 
-      <div className="mt-6">
-        <PrinciplePanel route={route} />
+          <PrinciplePanel route={route} />
+        </div>
       </div>
     </main>
   );
