@@ -205,7 +205,7 @@ export const babylonCulture: Route = {
       type: "conditional",
       id: "cnd-tourism-policy",
       lane: "civic",
-      label: "観光開放政策",
+      label: "開かれた国境・交易路で観光を加速",
       trigger: "終盤、相手との国境・交易路・宗教が絡むとき",
       detail: "開かれた国境・交易路・宗教一致で相手への観光を最大化する。",
     },
@@ -336,7 +336,7 @@ export const babylonCulture: Route = {
       id: "prn-policy-swap",
       lane: "civic",
       label: "政策カードは局面で差し替える",
-      body: "社会制度を取得した瞬間は政策の差し替えが無料(以外は金が要る)。遺産を建てる局面はゴシック建築・摩天楼、観光を通す局面は印刷術・自由連盟系へ、社会制度完了のたびに最適化する。",
+      body: "社会制度を取得した瞬間は政策の差し替えが無料(それ以外は金が要る)。遺産を建てる局面はゴシック建築・摩天楼、観光を通す局面は遺産観光・衛星放送・オンライン・コミュニティへ、社会制度の完了ごとに最適化する。",
     },
     {
       type: "principle",
