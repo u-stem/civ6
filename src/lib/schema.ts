@@ -41,6 +41,12 @@ export const RULESET_RANK: Record<Ruleset, number> = {
   "gathering-storm": 2,
 };
 
+export const RULESET_LABELS: Record<Ruleset, string> = {
+  base: "無印",
+  "rise-and-fall": "文明の興亡",
+  "gathering-storm": "嵐の訪れ",
+};
+
 // ゲームスピード。targetTurn の目安はこのキーで引く。
 export const GAME_SPEEDS = [
   "online",

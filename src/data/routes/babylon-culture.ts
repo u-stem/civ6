@@ -14,20 +14,47 @@ export const babylonCulture: Route = {
     "バビロン(ハンムラビ)。科学産出 −50% で能力は技術ツリーにしか効かない。本線は社会制度ツリー(劇場広場中心)、技術はひらめき最短連鎖。嵐の訪れ / 対人オンライン速度 / 神 / 4文明戦。自分からは対人開戦せず、AI は資産ごと収奪して観光・時代スコアに変換する。文化勝利は相対判定(自分の観光客 > 各相手の国内観光客)なので、相手の作品強奪は二重に効く。",
 
   counters: [
-    { key: "slinger", label: "投石兵" },
-    { key: "archer", label: "弓兵" },
-    { key: "crossbow", label: "弩兵" },
+    // 投石兵: 弓術前は常時。弓術後は残数を捌くまで(0になったら陳腐化で消える)。
+    {
+      key: "slinger",
+      label: "投石兵",
+      relevant: (s) => !flag(s, "tech.archery") || counter(s, "slinger") > 0,
+    },
+    // 弓兵: 弓術で解禁。機械後は弩兵化の残数があるときだけ。
+    {
+      key: "archer",
+      label: "弓兵",
+      relevant: (s) =>
+        flag(s, "tech.archery") &&
+        (!flag(s, "tech.machinery") || counter(s, "archer") > 0),
+    },
+    // 弩兵: 機械で解禁。
+    {
+      key: "crossbow",
+      label: "弩兵",
+      relevant: (s) => flag(s, "tech.machinery"),
+    },
     { key: "mine", label: "鉱山" },
     { key: "workshop", label: "工房" },
     { key: "city", label: "都市" },
-    { key: "theater", label: "劇場広場" },
+    // 劇場広場: 演劇と詩で解禁。
+    {
+      key: "theater",
+      label: "劇場広場",
+      relevant: (s) => flag(s, "civic.dramaPoetry"),
+    },
     { key: "districtTypes", label: "解禁済みの専門区域タイプ数" },
     { key: "districtsBuilt", label: "建設済みの専門区域数" },
   ],
   flags: [
     { key: "tech.mining", label: "採掘(技術)" },
     { key: "tech.archery", label: "弓術(技術)" },
-    { key: "tech.machinery", label: "機械(技術)" },
+    // 機械: 弓術の先にあるので、弓術取得後に出す。
+    {
+      key: "tech.machinery",
+      label: "機械(技術)",
+      relevant: (s) => flag(s, "tech.archery"),
+    },
     { key: "civic.dramaPoetry", label: "演劇と詩(社会制度)" },
     { key: "hero.davinci", label: "大技術者ダ・ヴィンチ確保" },
     { key: "spy.counterTrained", label: "スパイ防諜育成済み" },
@@ -198,8 +225,9 @@ export const babylonCulture: Route = {
       id: "cnd-rockband",
       lane: "civic",
       label: "ロックバンドで観光をスパイク",
-      trigger: "終盤、信仰力や金で購入できるとき(嵐の訪れ)",
+      trigger: "終盤、信仰力や金で購入できるとき",
       detail: "遺産・区域で公演すると大量の観光力を一度に稼げる。",
+      minRuleset: "gathering-storm",
     },
     {
       type: "conditional",
@@ -540,6 +568,7 @@ export const babylonCulture: Route = {
           trigger: "化学合成物質を取得し、河川隣接の近隣住区があるとき",
           detail:
             "洋上風力・太陽光・風力・地熱・水力ダムの電力に等しい観光力を得る。終盤の観光を大きく押し上げる。",
+          minRuleset: "gathering-storm",
         },
       ],
     },
