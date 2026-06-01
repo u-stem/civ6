@@ -1,14 +1,12 @@
 import type { ResearchNode } from "@/lib/schema";
 
 // 社会制度ツリー(文明の興亡基準。GS 固有要素は含まない)。
-// 出典(2026-06 時点で確認): CivFanatics https://civfanatics.com/civ6/info/civic/
-// 補正方針:
-// - 名称・条件はゲーム内日本語訳に依存せず、英語原文から正確に日本語化(英語名 nameEn を併記)。
-// - 解禁物は 政府/区域/建物/遺産/ユニット/改善 と代表的な政策カードを収録(政策カードは多数の
-//   ため主要なもののみ。網羅は段階的に追補する)。
-// - 区域 Government Plaza は文明の興亡では Political Philosophy で解禁されるため補完している。
+// 名称・解禁物(政策カード・政府・建物・区域・遺産・ユニット)は Civilopedia 日本語版で全件照合した正式名称。
+//   出典: https://www.civilopedia.net/ja/rise-and-fall/civics/civic_*
+// 天啓条件は英語一次情報(CivFanatics)+ Civilopedia 日本語で確認。
+// 政策カードは各社会制度の主要〜全件を収録。cost/prerequisites は CivFanatics(英語版)基準を維持。
 export const civics = [
-  // --- 古代 ---
+  // --- 太古 ---
   {
     id: "civic-code-of-laws",
     kind: "civic",
@@ -19,7 +17,8 @@ export const civics = [
     prerequisites: [],
     unlocks: [
       { type: "policy", nameEn: "Discipline", nameJa: "規律(政策)" },
-      { type: "policy", nameEn: "God King", nameJa: "神権王(政策)" },
+      { type: "policy", nameEn: "Survey", nameJa: "測量(政策)" },
+      { type: "policy", nameEn: "God King", nameJa: "神王(政策)" },
       { type: "policy", nameEn: "Urban Planning", nameJa: "都市計画(政策)" },
     ],
   },
@@ -27,7 +26,7 @@ export const civics = [
     id: "civic-craftsmanship",
     kind: "civic",
     nameEn: "Craftsmanship",
-    nameJa: "工芸",
+    nameJa: "職人技",
     era: "ancient",
     cost: 40,
     prerequisites: ["civic-code-of-laws"],
@@ -37,45 +36,41 @@ export const civics = [
     },
     unlocks: [
       { type: "policy", nameEn: "Ilkum", nameJa: "イルクム(政策)" },
-      { type: "policy", nameEn: "Agoge", nameJa: "アゴーゲー(政策)" },
+      { type: "policy", nameEn: "Agoge", nameJa: "スパルタ教育(政策)" },
     ],
   },
   {
     id: "civic-foreign-trade",
     kind: "civic",
     nameEn: "Foreign Trade",
-    nameJa: "海外交易",
+    nameJa: "対外貿易",
     era: "ancient",
     cost: 40,
     prerequisites: ["civic-code-of-laws"],
     boost: {
       conditionEn: "Discover a second continent",
-      conditionJa: "2つ目の大陸を発見する",
+      conditionJa: "第2の大陸を発見する",
     },
     unlocks: [
       { type: "unit", nameEn: "Trader", nameJa: "交易商" },
       { type: "policy", nameEn: "Caravansaries", nameJa: "隊商宿(政策)" },
-      {
-        type: "policy",
-        nameEn: "Maritime Industries",
-        nameJa: "海洋産業(政策)",
-      },
+      { type: "policy", nameEn: "Maritime Industries", nameJa: "海運業(政策)" },
     ],
   },
   {
     id: "civic-military-tradition",
     kind: "civic",
     nameEn: "Military Tradition",
-    nameJa: "軍事の伝統",
+    nameJa: "軍の伝統",
     era: "ancient",
     cost: 50,
     prerequisites: ["civic-craftsmanship"],
     boost: {
       conditionEn: "Clear a Barbarian Outpost",
-      conditionJa: "蛮族の前哨地を制圧する",
+      conditionJa: "蛮族の前哨地を一掃する",
     },
     unlocks: [
-      { type: "policy", nameEn: "Maneuver", nameJa: "機動(政策)" },
+      { type: "policy", nameEn: "Maneuver", nameJa: "機動戦(政策)" },
       { type: "policy", nameEn: "Strategos", nameJa: "ストラテゴス(政策)" },
     ],
   },
@@ -83,15 +78,16 @@ export const civics = [
     id: "civic-state-workforce",
     kind: "civic",
     nameEn: "State Workforce",
-    nameJa: "国家労働力",
+    nameJa: "労働徴発",
     era: "ancient",
     cost: 70,
     prerequisites: ["civic-craftsmanship"],
     boost: {
       conditionEn: "Build a specialty district",
-      conditionJa: "専門区域を1つ建設する",
+      conditionJa: "なんらかの専門区域を建設する",
     },
     unlocks: [
+      { type: "district", nameEn: "Government Plaza", nameJa: "政府複合施設" },
       { type: "policy", nameEn: "Corvée", nameJa: "賦役(政策)" },
       { type: "policy", nameEn: "Conscription", nameJa: "徴兵(政策)" },
     ],
@@ -100,17 +96,17 @@ export const civics = [
     id: "civic-early-empire",
     kind: "civic",
     nameEn: "Early Empire",
-    nameJa: "初期帝国",
+    nameJa: "古代の帝国",
     era: "ancient",
     cost: 70,
     prerequisites: ["civic-foreign-trade"],
     boost: {
       conditionEn: "Have 6 population total across your cities",
-      conditionJa: "自国の人口の合計が6になる",
+      conditionJa: "自国の人口を合計6人以上に増やす",
     },
     unlocks: [
-      { type: "policy", nameEn: "Colonization", nameJa: "植民(政策)" },
-      { type: "policy", nameEn: "Land Surveyors", nameJa: "測量士(政策)" },
+      { type: "policy", nameEn: "Land Surveyors", nameJa: "測量技師(政策)" },
+      { type: "policy", nameEn: "Colonization", nameJa: "植民地化(政策)" },
     ],
   },
   {
@@ -126,7 +122,8 @@ export const civics = [
       conditionJa: "パンテオンを創始する",
     },
     unlocks: [
-      { type: "wonder", nameEn: "Oracle", nameJa: "オラクル(神託所)" },
+      { type: "wonder", nameEn: "Oracle", nameJa: "アポロン神殿" },
+      { type: "policy", nameEn: "Inspiration", nameJa: "天啓(政策)" },
       { type: "policy", nameEn: "Revelation", nameJa: "啓示(政策)" },
     ],
   },
@@ -136,18 +133,23 @@ export const civics = [
     id: "civic-games-and-recreation",
     kind: "civic",
     nameEn: "Games and Recreation",
-    nameJa: "競技と娯楽",
+    nameJa: "遊びと娯楽",
     era: "classical",
     cost: 110,
     prerequisites: ["civic-state-workforce"],
     boost: {
       conditionEn: "Research the Construction technology",
-      conditionJa: "テクノロジー「建築」を研究する",
+      conditionJa: "テクノロジー「建築学」を研究する",
     },
     unlocks: [
-      { type: "district", nameEn: "Entertainment Complex", nameJa: "娯楽施設" },
-      { type: "building", nameEn: "Arena", nameJa: "闘技場" },
-      { type: "policy", nameEn: "Insulae", nameJa: "集合住宅(政策)" },
+      {
+        type: "district",
+        nameEn: "Entertainment Complex",
+        nameJa: "総合娯楽施設",
+      },
+      { type: "building", nameEn: "Arena", nameJa: "アリーナ" },
+      { type: "wonder", nameEn: "Colosseum", nameJa: "コロッセオ" },
+      { type: "policy", nameEn: "Insulae", nameJa: "インスラ(政策)" },
     ],
   },
   {
@@ -160,17 +162,19 @@ export const civics = [
     prerequisites: ["civic-state-workforce", "civic-early-empire"],
     boost: {
       conditionEn: "Meet 3 city-states",
-      conditionJa: "都市国家3つと出会う",
+      conditionJa: "3つの都市国家に出会う",
     },
     unlocks: [
-      { type: "district", nameEn: "Government Plaza", nameJa: "政府複合施設" },
-      { type: "government", nameEn: "Autocracy", nameJa: "専制政治" },
+      { type: "government", nameEn: "Autocracy", nameJa: "独裁政治" },
       { type: "government", nameEn: "Oligarchy", nameJa: "寡頭制" },
+      { type: "government", nameEn: "Classical Republic", nameJa: "共和制" },
+      { type: "wonder", nameEn: "Apadana", nameJa: "アパダーナ" },
       {
-        type: "government",
-        nameEn: "Classical Republic",
-        nameJa: "古典共和制",
+        type: "policy",
+        nameEn: "Charismatic Leader",
+        nameJa: "カリスマ的指導者(政策)",
       },
+      { type: "policy", nameEn: "Diplomatic League", nameJa: "外交連盟(政策)" },
     ],
   },
   {
@@ -181,17 +185,14 @@ export const civics = [
     era: "classical",
     cost: 110,
     prerequisites: ["civic-early-empire"],
-    boost: {
-      conditionEn: "Build a Wonder",
-      conditionJa: "遺産を1つ建設する",
-    },
+    boost: { conditionEn: "Build a Wonder", conditionJa: "遺産を1つ建設する" },
     unlocks: [
       { type: "district", nameEn: "Theater Square", nameJa: "劇場広場" },
-      { type: "building", nameEn: "Amphitheater", nameJa: "円形劇場" },
+      { type: "building", nameEn: "Amphitheater", nameJa: "円形闘技場" },
       {
         type: "policy",
         nameEn: "Literary Tradition",
-        nameJa: "文学の伝統(政策)",
+        nameJa: "文学的伝統(政策)",
       },
     ],
   },
@@ -208,15 +209,16 @@ export const civics = [
       conditionJa: "区域を1つ建設する",
     },
     unlocks: [
-      { type: "policy", nameEn: "Veterancy", nameJa: "熟練兵育成(政策)" },
-      { type: "policy", nameEn: "Raid", nameJa: "略奪(政策)" },
+      { type: "wonder", nameEn: "Statue of Zeus", nameJa: "ゼウス像" },
+      { type: "policy", nameEn: "Veterancy", nameJa: "ベテラン(政策)" },
+      { type: "policy", nameEn: "Raid", nameJa: "襲撃戦(政策)" },
     ],
   },
   {
     id: "civic-defensive-tactics",
     kind: "civic",
     nameEn: "Defensive Tactics",
-    nameJa: "防衛戦術",
+    nameJa: "防御戦術",
     era: "classical",
     cost: 175,
     prerequisites: ["civic-games-and-recreation", "civic-political-philosophy"],
@@ -225,6 +227,11 @@ export const civics = [
       conditionJa: "他文明から宣戦布告される",
     },
     unlocks: [
+      {
+        type: "wonder",
+        nameEn: "Mausoleum at Halicarnassus",
+        nameJa: "マウソロス霊廟",
+      },
       { type: "policy", nameEn: "Bastions", nameJa: "稜堡(政策)" },
       { type: "policy", nameEn: "Limes", nameJa: "リメス(政策)" },
     ],
@@ -233,7 +240,7 @@ export const civics = [
     id: "civic-recorded-history",
     kind: "civic",
     nameEn: "Recorded History",
-    nameJa: "歴史記録",
+    nameJa: "歴史の記録",
     era: "classical",
     cost: 175,
     prerequisites: ["civic-political-philosophy", "civic-drama-and-poetry"],
@@ -245,13 +252,14 @@ export const civics = [
       {
         type: "wonder",
         nameEn: "Great Library",
-        nameJa: "アレクサンドリア図書館",
+        nameJa: "アレキサンドリア図書館",
       },
       {
         type: "policy",
         nameEn: "Natural Philosophy",
-        nameJa: "自然哲学(政策)",
+        nameJa: "自然科学(政策)",
       },
+      { type: "policy", nameEn: "Praetorium", nameJa: "プラエトリウム(政策)" },
     ],
   },
   {
@@ -262,12 +270,14 @@ export const civics = [
     era: "classical",
     cost: 120,
     prerequisites: ["civic-mysticism", "civic-drama-and-poetry"],
-    boost: {
-      conditionEn: "Found a religion",
-      conditionJa: "宗教を創始する",
-    },
+    boost: { conditionEn: "Found a religion", conditionJa: "宗教を創始する" },
     unlocks: [
       { type: "building", nameEn: "Temple", nameJa: "神殿" },
+      {
+        type: "wonder",
+        nameEn: "Mahabodhi Temple",
+        nameJa: "マハーボーディー寺院",
+      },
       { type: "policy", nameEn: "Scripture", nameJa: "聖典(政策)" },
     ],
   },
@@ -283,39 +293,36 @@ export const civics = [
     prerequisites: ["civic-defensive-tactics"],
     boost: {
       conditionEn: "Kill a unit using a Quadrireme",
-      conditionJa: "クアドリレームでユニットを倒す",
+      conditionJa: "カドリレームでユニットを倒す",
     },
     unlocks: [
       {
         type: "policy",
         nameEn: "Naval Infrastructure",
-        nameJa: "海軍インフラ(政策)",
+        nameJa: "海洋インフラ(政策)",
       },
-      { type: "policy", nameEn: "Navigation", nameJa: "航海(政策)" },
+      { type: "policy", nameEn: "Navigation", nameJa: "航海術(政策)" },
     ],
   },
   {
     id: "civic-feudalism",
     kind: "civic",
     nameEn: "Feudalism",
-    nameJa: "封建制",
+    nameJa: "封建制度",
     era: "medieval",
     cost: 275,
     prerequisites: ["civic-defensive-tactics"],
-    boost: {
-      conditionEn: "Build 6 Farms",
-      conditionJa: "農場を6つ建設する",
-    },
+    boost: { conditionEn: "Build 6 Farms", conditionJa: "農場を6つ建設する" },
     unlocks: [
-      { type: "policy", nameEn: "Serfdom", nameJa: "農奴制(政策)" },
       { type: "policy", nameEn: "Feudal Contract", nameJa: "封建契約(政策)" },
+      { type: "policy", nameEn: "Serfdom", nameJa: "農奴制(政策)" },
     ],
   },
   {
     id: "civic-civil-service",
     kind: "civic",
     nameEn: "Civil Service",
-    nameJa: "官僚制",
+    nameJa: "公務員制度",
     era: "medieval",
     cost: 275,
     prerequisites: ["civic-defensive-tactics", "civic-recorded-history"],
@@ -324,8 +331,8 @@ export const civics = [
       conditionJa: "単一都市の人口を10にする",
     },
     unlocks: [
-      { type: "policy", nameEn: "Retainers", nameJa: "従者(政策)" },
-      { type: "policy", nameEn: "Meritocracy", nameJa: "実力主義(政策)" },
+      { type: "policy", nameEn: "Retainers", nameJa: "家臣(政策)" },
+      { type: "policy", nameEn: "Meritocracy", nameJa: "市民の評判(政策)" },
     ],
   },
   {
@@ -345,7 +352,7 @@ export const civics = [
       {
         type: "policy",
         nameEn: "Trade Confederation",
-        nameJa: "交易連合(政策)",
+        nameJa: "通商連合(政策)",
       },
     ],
   },
@@ -362,11 +369,17 @@ export const civics = [
       conditionJa: "交易路を4つ持つ",
     },
     unlocks: [
-      { type: "policy", nameEn: "Aesthetics", nameJa: "耽美主義(政策)" },
+      { type: "wonder", nameEn: "Angkor Wat", nameJa: "アンコールワット" },
       {
         type: "policy",
-        nameEn: "Merchant Confederation",
-        nameJa: "商人連合(政策)",
+        nameEn: "Trade Confederation",
+        nameJa: "貿易連合(政策)",
+      },
+      { type: "policy", nameEn: "Aesthetics", nameJa: "美学(政策)" },
+      {
+        type: "policy",
+        nameEn: "Medina Quarter",
+        nameJa: "メディナ地区(政策)",
       },
     ],
   },
@@ -378,14 +391,13 @@ export const civics = [
     era: "medieval",
     cost: 385,
     prerequisites: ["civic-feudalism", "civic-civil-service"],
-    boost: {
-      conditionEn: "Own 2 Markets",
-      conditionJa: "市場を2つ保有する",
-    },
+    boost: { conditionEn: "Own 2 Markets", conditionJa: "市場を2つ保有する" },
     unlocks: [
-      { type: "wonder", nameEn: "Chichen Itza", nameJa: "チチェン・イッツァ" },
-      { type: "policy", nameEn: "Town Charters", nameJa: "都市特許状(政策)" },
+      { type: "district", nameEn: "Mbanza", nameJa: "ンバンザ" },
+      { type: "wonder", nameEn: "Chichen Itza", nameJa: "チチェン・イツァ" },
       { type: "policy", nameEn: "Craftsmen", nameJa: "職人(政策)" },
+      { type: "policy", nameEn: "Town Charters", nameJa: "町への勅許(政策)" },
+      { type: "policy", nameEn: "Traveling Merchants", nameJa: "旅商人(政策)" },
     ],
   },
   {
@@ -396,17 +408,15 @@ export const civics = [
     era: "medieval",
     cost: 290,
     prerequisites: ["civic-theology", "civic-civil-service"],
-    boost: {
-      conditionEn: "Own 2 Temples",
-      conditionJa: "神殿を2つ保有する",
-    },
+    boost: { conditionEn: "Own 2 Temples", conditionJa: "神殿を2つ建設する" },
     unlocks: [
       { type: "government", nameEn: "Monarchy", nameJa: "君主制" },
       {
         type: "wonder",
         nameEn: "Mont St. Michel",
-        nameJa: "モン・サン・ミシェル",
+        nameJa: "モン・サン=ミシェル",
       },
+      { type: "policy", nameEn: "Chivalry", nameJa: "騎士道(政策)" },
       {
         type: "policy",
         nameEn: "Gothic Architecture",
@@ -425,24 +435,20 @@ export const civics = [
     cost: 400,
     prerequisites: ["civic-mercenaries", "civic-medieval-faires"],
     boost: {
-      conditionEn: "Own 2 Caravels",
-      conditionJa: "キャラベルを2隻保有する",
+      conditionEn: "Build 2 Caravels",
+      conditionJa: "キャラベル船を2隻建造する",
     },
     unlocks: [
-      {
-        type: "government",
-        nameEn: "Merchant Republic",
-        nameJa: "重商主義共和制",
-      },
-      { type: "improvement", nameEn: "Mission", nameJa: "伝道所" },
-      { type: "policy", nameEn: "Colonial Offices", nameJa: "植民地局(政策)" },
+      { type: "government", nameEn: "Merchant Republic", nameJa: "商業共和制" },
+      { type: "policy", nameEn: "Press Gangs", nameJa: "強制徴募(政策)" },
+      { type: "policy", nameEn: "Colonial Offices", nameJa: "植民地省(政策)" },
     ],
   },
   {
     id: "civic-humanism",
     kind: "civic",
     nameEn: "Humanism",
-    nameJa: "人文主義",
+    nameJa: "ヒューマニズム",
     era: "renaissance",
     cost: 540,
     prerequisites: ["civic-medieval-faires"],
@@ -451,32 +457,34 @@ export const civics = [
       conditionJa: "大芸術家を獲得する",
     },
     unlocks: [
-      { type: "building", nameEn: "Art Museum", nameJa: "美術博物館" },
+      { type: "building", nameEn: "Art Museum", nameJa: "美術館" },
       {
         type: "building",
         nameEn: "Archaeological Museum",
-        nameJa: "考古学博物館",
+        nameJa: "考古博物館",
       },
+      { type: "wonder", nameEn: "Taj Mahal", nameJa: "タージ・マハル" },
       { type: "improvement", nameEn: "Château", nameJa: "シャトー" },
+      { type: "policy", nameEn: "Invention", nameJa: "発明(政策)" },
+      { type: "policy", nameEn: "Frescoes", nameJa: "フレスコ画(政策)" },
     ],
   },
   {
     id: "civic-diplomatic-service",
     kind: "civic",
     nameEn: "Diplomatic Service",
-    nameJa: "外交",
+    nameJa: "外交官",
     era: "renaissance",
     cost: 540,
     prerequisites: ["civic-guilds"],
-    boost: {
-      conditionEn: "Form an Alliance",
-      conditionJa: "同盟を結ぶ",
-    },
+    boost: { conditionEn: "Form an Alliance", conditionJa: "同盟を結ぶ" },
     unlocks: [
+      { type: "policy", nameEn: "Machiavellianism", nameJa: "権謀術数(政策)" },
+      { type: "policy", nameEn: "Exchange Banks", nameJa: "為替銀行(政策)" },
       {
         type: "policy",
-        nameEn: "Machiavellianism",
-        nameJa: "マキャヴェリズム(政策)",
+        nameEn: "Foreign Ministries",
+        nameJa: "在外公館(政策)",
       },
     ],
   },
@@ -484,7 +492,7 @@ export const civics = [
     id: "civic-reformed-church",
     kind: "civic",
     nameEn: "Reformed Church",
-    nameJa: "改革派教会",
+    nameJa: "宗教改革",
     era: "renaissance",
     cost: 400,
     prerequisites: ["civic-guilds", "civic-divine-right"],
@@ -494,7 +502,14 @@ export const civics = [
     },
     unlocks: [
       { type: "government", nameEn: "Theocracy", nameJa: "神権政治" },
+      {
+        type: "wonder",
+        nameEn: "St. Basil's Cathedral",
+        nameJa: "聖ワシリイ大聖堂",
+      },
+      { type: "policy", nameEn: "Wars of Religion", nameJa: "宗教戦争(政策)" },
       { type: "policy", nameEn: "Religious Orders", nameJa: "修道会(政策)" },
+      { type: "policy", nameEn: "Simultaneum", nameJa: "シムルタネウム(政策)" },
     ],
   },
   {
@@ -511,8 +526,9 @@ export const civics = [
     },
     unlocks: [
       { type: "unit", nameEn: "Privateer", nameJa: "私掠船" },
+      { type: "wonder", nameEn: "Torre de Belém", nameJa: "ベレンの塔" },
+      { type: "policy", nameEn: "Logistics", nameJa: "ロジスティクス(政策)" },
       { type: "policy", nameEn: "Triangular Trade", nameJa: "三角貿易(政策)" },
-      { type: "policy", nameEn: "Logistics", nameJa: "兵站(政策)" },
     ],
   },
   {
@@ -548,8 +564,13 @@ export const civics = [
       conditionJa: "テクノロジー「天文学」を研究する",
     },
     unlocks: [
+      {
+        type: "policy",
+        nameEn: "Native Conquest",
+        nameJa: "先住民の征服(政策)",
+      },
       { type: "policy", nameEn: "Colonial Taxes", nameJa: "植民地税(政策)" },
-      { type: "policy", nameEn: "Press Gangs", nameJa: "強制徴募(政策)" },
+      { type: "policy", nameEn: "Raj", nameJa: "ラージ(政策)" },
     ],
   },
   {
@@ -565,6 +586,7 @@ export const civics = [
       conditionJa: "異なる専門区域を7種類建設する",
     },
     unlocks: [
+      { type: "wonder", nameEn: "Statue of Liberty", nameJa: "自由の女神" },
       { type: "policy", nameEn: "Public Works", nameJa: "公共事業(政策)" },
       { type: "policy", nameEn: "Skyscrapers", nameJa: "摩天楼(政策)" },
     ],
@@ -573,17 +595,21 @@ export const civics = [
     id: "civic-nationalism",
     kind: "civic",
     nameEn: "Nationalism",
-    nameJa: "国家主義",
+    nameJa: "ナショナリズム",
     era: "industrial",
     cost: 875,
     prerequisites: ["civic-the-enlightenment"],
     boost: {
-      conditionEn: "Have another civilization declare war on you",
-      conditionJa: "他文明から宣戦布告される",
+      conditionEn: "Declare war using a Casus Belli",
+      conditionJa: "開戦事由を使って宣戦布告をする",
     },
     unlocks: [
       { type: "policy", nameEn: "Grande Armée", nameJa: "大陸軍(政策)" },
-      { type: "policy", nameEn: "National Identity", nameJa: "国家意識(政策)" },
+      {
+        type: "policy",
+        nameEn: "National Identity",
+        nameJa: "ナショナル・アイデンティティー(政策)",
+      },
     ],
   },
   {
@@ -596,11 +622,16 @@ export const civics = [
     prerequisites: ["civic-the-enlightenment"],
     boost: {
       conditionEn: "Own 1 Art Museum",
-      conditionJa: "美術博物館を1つ保有する",
+      conditionJa: "美術館を1つ保有する",
     },
     unlocks: [
       { type: "wonder", nameEn: "Bolshoi Theatre", nameJa: "ボリショイ劇場" },
-      { type: "policy", nameEn: "Grand Opera", nameJa: "グランドオペラ(政策)" },
+      {
+        type: "policy",
+        nameEn: "Grand Opera",
+        nameJa: "グランド・オペラ(政策)",
+      },
+      { type: "policy", nameEn: "Symphonies", nameJa: "交響楽(政策)" },
     ],
   },
   {
@@ -613,11 +644,16 @@ export const civics = [
     prerequisites: ["civic-colonialism"],
     boost: {
       conditionEn: "Own 1 Archaeological Museum",
-      conditionJa: "考古学博物館を1つ保有する",
+      conditionJa: "考古博物館を1つ保有する",
     },
     unlocks: [
-      { type: "unit", nameEn: "Archaeologist", nameJa: "考古学者" },
       { type: "building", nameEn: "Zoo", nameJa: "動物園" },
+      { type: "unit", nameEn: "Archaeologist", nameJa: "考古学者" },
+      {
+        type: "other",
+        nameEn: "Reveals Antiquity Site",
+        nameJa: "史跡を発見可能にする",
+      },
     ],
   },
   {
@@ -634,7 +670,12 @@ export const civics = [
     },
     unlocks: [
       { type: "policy", nameEn: "Total War", nameJa: "総力戦(政策)" },
-      { type: "policy", nameEn: "Expropriation", nameJa: "接収(政策)" },
+      { type: "policy", nameEn: "Expropriation", nameJa: "収用(政策)" },
+      {
+        type: "policy",
+        nameEn: "Military Organization",
+        nameJa: "軍隊組織(政策)",
+      },
     ],
   },
   {
@@ -650,8 +691,12 @@ export const civics = [
       conditionJa: "単一都市の人口を15にする",
     },
     unlocks: [
-      { type: "policy", nameEn: "Public Transport", nameJa: "公共交通(政策)" },
-      { type: "policy", nameEn: "New Deal", nameJa: "ニューディール(政策)" },
+      {
+        type: "policy",
+        nameEn: "Public Transport",
+        nameJa: "公共交通機関(政策)",
+      },
+      { type: "policy", nameEn: "Military Research", nameJa: "軍事研究(政策)" },
     ],
   },
 
@@ -660,16 +705,17 @@ export const civics = [
     id: "civic-conservation",
     kind: "civic",
     nameEn: "Conservation",
-    nameJa: "環境保護",
+    nameJa: "自然保護",
     era: "modern",
     cost: 1140,
     prerequisites: ["civic-natural-history", "civic-urbanization"],
     boost: {
-      conditionEn: "Own 4 Neighborhood districts",
-      conditionJa: "近隣住区を4つ保有する",
+      conditionEn: "Own a Neighborhood with the highest Appeal",
+      conditionJa: "アピールが「最高」の近郊部を所有する",
     },
     unlocks: [
       { type: "unit", nameEn: "Naturalist", nameJa: "自然主義者" },
+      { type: "building", nameEn: "Sanctuary", nameJa: "聖域" },
       {
         type: "policy",
         nameEn: "Resource Management",
@@ -690,6 +736,7 @@ export const civics = [
       conditionJa: "テクノロジー「無線通信」を研究する",
     },
     unlocks: [
+      { type: "wonder", nameEn: "Broadway", nameJa: "ブロードウェイ" },
       {
         type: "wonder",
         nameEn: "Cristo Redentor",
@@ -702,16 +749,20 @@ export const civics = [
     id: "civic-mobilization",
     kind: "civic",
     nameEn: "Mobilization",
-    nameJa: "動員",
+    nameJa: "戦時動員",
     era: "modern",
     cost: 1280,
     prerequisites: ["civic-urbanization"],
     boost: {
       conditionEn: "Have 3 Corps in your army",
-      conditionJa: "軍団(Corps)を3つ編成する",
+      conditionJa: "軍団を3つ所有する",
     },
     unlocks: [
-      { type: "policy", nameEn: "Levée en Masse", nameJa: "国民総動員(政策)" },
+      {
+        type: "policy",
+        nameEn: "Levée en Masse",
+        nameJa: "国民総動員令(政策)",
+      },
     ],
   },
   {
@@ -724,11 +775,16 @@ export const civics = [
     prerequisites: ["civic-mass-media"],
     boost: {
       conditionEn: "Own 3 Stock Exchanges",
-      conditionJa: "証券取引所を3つ保有する",
+      conditionJa: "証券取引所を3つ建設する",
     },
     unlocks: [
+      {
+        type: "building",
+        nameEn: "Shopping Mall",
+        nameJa: "ショッピングモール",
+      },
+      { type: "policy", nameEn: "Laissez-Faire", nameJa: "自由放任主義(政策)" },
       { type: "policy", nameEn: "Market Economy", nameJa: "市場経済(政策)" },
-      { type: "policy", nameEn: "Laissez-Faire", nameJa: "自由放任(政策)" },
     ],
   },
   {
@@ -740,11 +796,6 @@ export const civics = [
     cost: 600,
     prerequisites: ["civic-mass-media", "civic-mobilization"],
     unlocks: [
-      {
-        type: "government",
-        nameEn: "Tier 3 governments (via following civics)",
-        nameJa: "上位政府(後続の社会制度で解禁)",
-      },
       { type: "policy", nameEn: "Police State", nameJa: "警察国家(政策)" },
     ],
   },
@@ -752,33 +803,42 @@ export const civics = [
     id: "civic-nuclear-program",
     kind: "civic",
     nameEn: "Nuclear Program",
-    nameJa: "核開発計画",
+    nameJa: "核開発",
     era: "modern",
     cost: 1560,
     prerequisites: ["civic-ideology"],
     boost: {
       conditionEn: "Own 1 Research Lab",
-      conditionJa: "研究所を1つ保有する",
+      conditionJa: "研究所を1つ建設する",
     },
     unlocks: [
       { type: "policy", nameEn: "Nobel Prize", nameJa: "ノーベル賞(政策)" },
+      { type: "policy", nameEn: "Nuclear Espionage", nameJa: "核諜報(政策)" },
     ],
   },
   {
     id: "civic-suffrage",
     kind: "civic",
     nameEn: "Suffrage",
-    nameJa: "参政権",
+    nameJa: "選挙権/参政権",
     era: "modern",
     cost: 1560,
     prerequisites: ["civic-ideology"],
-    boost: {
-      conditionEn: "Own 4 Sewers",
-      conditionJa: "下水道を4つ保有する",
-    },
+    boost: { conditionEn: "Own 4 Sewers", conditionJa: "下水道を4つ建設する" },
     unlocks: [
       { type: "government", nameEn: "Democracy", nameJa: "民主主義" },
-      { type: "policy", nameEn: "New Deal", nameJa: "ニューディール(政策)" },
+      { type: "policy", nameEn: "Economic Union", nameJa: "経済同盟(政策)" },
+      { type: "policy", nameEn: "Finest Hour", nameJa: "栄光の時代(政策)" },
+      {
+        type: "policy",
+        nameEn: "Arsenal of Democracy",
+        nameJa: "民主主義の兵器廠(政策)",
+      },
+      {
+        type: "policy",
+        nameEn: "New Deal",
+        nameJa: "ニューディール政策(政策)",
+      },
     ],
   },
   {
@@ -791,11 +851,14 @@ export const civics = [
     prerequisites: ["civic-ideology"],
     boost: {
       conditionEn: "Own 3 Military Academies",
-      conditionJa: "士官学校を3つ保有する",
+      conditionJa: "士官学校を3つ建設する",
     },
     unlocks: [
       { type: "government", nameEn: "Fascism", nameJa: "ファシズム" },
+      { type: "policy", nameEn: "Lightning Warfare", nameJa: "電撃戦(政策)" },
+      { type: "policy", nameEn: "Third Alternative", nameJa: "第三の道(政策)" },
       { type: "policy", nameEn: "Martial Law", nameJa: "戒厳令(政策)" },
+      { type: "policy", nameEn: "Gunboat Diplomacy", nameJa: "砲艦外交(政策)" },
     ],
   },
   {
@@ -806,13 +869,17 @@ export const civics = [
     era: "modern",
     cost: 1560,
     prerequisites: ["civic-ideology"],
-    boost: {
-      conditionEn: "Own 3 Factories",
-      conditionJa: "工場を3つ保有する",
-    },
+    boost: { conditionEn: "Own 3 Factories", conditionJa: "工場を3つ建設する" },
     unlocks: [
       { type: "government", nameEn: "Communism", nameJa: "共産主義" },
       { type: "policy", nameEn: "Five-Year Plan", nameJa: "五カ年計画(政策)" },
+      { type: "policy", nameEn: "Collectivization", nameJa: "集産化(政策)" },
+      { type: "policy", nameEn: "Patriotic War", nameJa: "祖国戦争(政策)" },
+      {
+        type: "policy",
+        nameEn: "Defense of the Motherland",
+        nameJa: "祖国防衛(政策)",
+      },
     ],
   },
 
@@ -830,8 +897,14 @@ export const civics = [
       conditionJa: "テクノロジー「核分裂」を研究する",
     },
     unlocks: [
-      { type: "policy", nameEn: "Containment", nameJa: "封じ込め(政策)" },
+      {
+        type: "building",
+        nameEn: "Amundsen-Scott Research Station",
+        nameJa: "アムンゼン・スコット基地",
+      },
+      { type: "policy", nameEn: "Cryptography", nameJa: "暗号学(政策)" },
       { type: "policy", nameEn: "International Waters", nameJa: "公海(政策)" },
+      { type: "policy", nameEn: "Containment", nameJa: "抑制(政策)" },
     ],
   },
   {
@@ -848,6 +921,11 @@ export const civics = [
     },
     unlocks: [
       { type: "building", nameEn: "Stadium", nameJa: "スタジアム" },
+      {
+        type: "wonder",
+        nameEn: "Estádio do Maracanã",
+        nameJa: "マラカナン・スタジアム",
+      },
       {
         type: "policy",
         nameEn: "Sports Media",
@@ -873,10 +951,11 @@ export const civics = [
         nameEn: "Sydney Opera House",
         nameJa: "シドニー・オペラハウス",
       },
+      { type: "policy", nameEn: "Heritage Tourism", nameJa: "遺産観光(政策)" },
       {
-        type: "policy",
-        nameEn: "Heritage Tourism",
-        nameJa: "文化遺産観光(政策)",
+        type: "other",
+        nameEn: "Reveals Shipwreck",
+        nameJa: "沈没船を発見可能にする",
       },
     ],
   },
@@ -884,7 +963,7 @@ export const civics = [
     id: "civic-rapid-deployment",
     kind: "civic",
     nameEn: "Rapid Deployment",
-    nameJa: "緊急展開",
+    nameJa: "早期展開",
     era: "atomic",
     cost: 2100,
     prerequisites: ["civic-cold-war"],
@@ -894,6 +973,11 @@ export const civics = [
     },
     unlocks: [
       { type: "policy", nameEn: "Military First", nameJa: "軍事優先(政策)" },
+      {
+        type: "policy",
+        nameEn: "After Action Reports",
+        nameJa: "活動報告(政策)",
+      },
     ],
   },
   {
@@ -911,8 +995,13 @@ export const civics = [
     unlocks: [
       {
         type: "policy",
+        nameEn: "Satellite Broadcasts",
+        nameJa: "衛星放送(政策)",
+      },
+      {
+        type: "policy",
         nameEn: "Integrated Space Cell",
-        nameJa: "統合宇宙局(政策)",
+        nameJa: "統合宇宙機構(政策)",
       },
     ],
   },
@@ -922,21 +1011,23 @@ export const civics = [
     id: "civic-globalization",
     kind: "civic",
     nameEn: "Globalization",
-    nameJa: "グローバリゼーション",
+    nameJa: "グローバル化",
     era: "information",
     cost: 2400,
     prerequisites: ["civic-rapid-deployment", "civic-space-race"],
-    boost: {
-      conditionEn: "Own 3 Airports",
-      conditionJa: "空港を3つ保有する",
-    },
+    boost: { conditionEn: "Own 3 Airports", conditionJa: "空港を3つ保有する" },
     unlocks: [
       {
         type: "policy",
-        nameEn: "International Space Agency",
-        nameJa: "国際宇宙機関(政策)",
+        nameEn: "Strategic Air Force",
+        nameJa: "戦略航空部隊(政策)",
       },
       { type: "policy", nameEn: "Ecommerce", nameJa: "電子商取引(政策)" },
+      {
+        type: "policy",
+        nameEn: "International Space Agency",
+        nameJa: "国際宇宙局(政策)",
+      },
     ],
   },
   {
@@ -955,13 +1046,14 @@ export const civics = [
       {
         type: "policy",
         nameEn: "Online Communities",
-        nameJa: "オンラインコミュニティ(政策)",
+        nameJa: "オンライン・コミュニティ(政策)",
       },
       {
         type: "policy",
         nameEn: "Collective Activism",
-        nameJa: "集団行動主義(政策)",
+        nameJa: "集団的行動主義(政策)",
       },
+      { type: "policy", nameEn: "Press Bureau", nameJa: "通信局(政策)" },
     ],
   },
 ] satisfies ResearchNode[];
