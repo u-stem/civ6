@@ -1,7 +1,7 @@
 import type { Civilization, TaskFragment, VictoryType } from "@/lib/schema";
 import { babylon } from "./civilizations/babylon";
 import { commonFragments } from "./common/economy";
-import { CULTURE_GUIDE, cultureFragments } from "./victories/culture";
+import { cultureFragments } from "./victories/culture";
 
 // 収録済みの文明。指導者の追加は必要になったら行う。
 export const CIVILIZATIONS: Civilization[] = [babylon];
@@ -16,10 +16,13 @@ export const ALL_FRAGMENTS: TaskFragment[] = [
   ...cultureFragments,
 ];
 
-// データ投入済み(=セットアップで選択可能)の勝利条件。
-export const IMPLEMENTED_VICTORIES: VictoryType[] = ["culture"];
+// セットアップで選択可能な勝利条件(R&F に実在する4種。外交勝利は嵐の訪れ専用のため除く)。
+export const IMPLEMENTED_VICTORIES: VictoryType[] = [
+  "science",
+  "culture",
+  "religion",
+  "domination",
+];
 
-// 勝利条件ごとの概要(wiki 表示用)。
-export const VICTORY_GUIDES: Partial<Record<VictoryType, string>> = {
-  culture: CULTURE_GUIDE,
-};
+// 勝利条件ごとの概要(wiki 表示用)。全5種を guides.ts で定義。
+export { VICTORY_GUIDES } from "./victories/guides";
