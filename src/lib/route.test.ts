@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+  activeBranches,
   currentPhase,
   evaluateWarnings,
   type GameState,
@@ -66,6 +67,15 @@ const route: Route = {
     { id: "ph1", fromTurn: 1, label: "序盤", hint: "" },
     { id: "ph2", fromTurn: 30, label: "中盤", hint: "" },
   ],
+  branches: [
+    {
+      id: "b1",
+      label: "分岐A",
+      detail: "",
+      when: (s) => s.flags["ai.adjacent"] === true,
+      nodes: [],
+    },
+  ],
 };
 
 describe("evaluateWarnings", () => {
@@ -109,5 +119,16 @@ describe("laneProgress", () => {
   test("生産レーンの完了数を数える", () => {
     const s = makeState({ counters: { slinger: 3 } });
     expect(laneProgress(route, "production", s)).toEqual({ done: 1, total: 1 });
+  });
+});
+
+describe("activeBranches", () => {
+  test("条件を満たす分岐だけ active", () => {
+    const s = makeState({ flags: { "ai.adjacent": true } });
+    expect(activeBranches(route, s).map((b) => b.id)).toEqual(["b1"]);
+  });
+
+  test("満たさなければ active なし", () => {
+    expect(activeBranches(route, makeState())).toHaveLength(0);
   });
 });

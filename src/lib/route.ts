@@ -83,6 +83,15 @@ export type Phase = {
 export type CounterDef = { key: string; label: string };
 export type FlagDef = { key: string; label: string };
 
+// 状態に応じて活性化する分岐(対AI方針など)。active なときだけその手を取る。
+export type Branch = {
+  id: string;
+  label: string;
+  detail: string;
+  when: (s: GameState) => boolean;
+  nodes: RouteNode[];
+};
+
 export type Route = {
   id: string;
   name: string;
@@ -94,12 +103,22 @@ export type Route = {
   nodes: RouteNode[];
   warnings: Warning[];
   phases: Phase[];
+  branches: Branch[];
 };
 
 // --- エンジン(純粋関数) ---
 
 export function evaluateWarnings(route: Route, state: GameState): Warning[] {
   return route.warnings.filter((w) => w.when(state));
+}
+
+// 現在の状態で active な分岐。
+export function activeBranches(route: Route, state: GameState): Branch[] {
+  return route.branches.filter((b) => b.when(state));
+}
+
+export function isBranchActive(branch: Branch, state: GameState): boolean {
+  return branch.when(state);
 }
 
 export function isDone(node: RouteNode, state: GameState): boolean {
