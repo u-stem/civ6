@@ -84,11 +84,8 @@ export default function Page() {
       ) : sessions.length === 0 ? (
         <div className="rounded-lg border border-dashed py-16 text-center">
           <p className="text-muted-foreground">
-            まだセッションがありません。「新規セッション」から始めましょう。
+            まだセッションがありません。右上の「新規セッション」から始めましょう。
           </p>
-          <div className="mt-4 flex justify-center">
-            <NewSessionDialog onCreate={handleCreate} />
-          </div>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
