@@ -1,4 +1,8 @@
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCivilization } from "@/data";
 
 export default async function CivPage({
@@ -11,66 +15,111 @@ export default async function CivPage({
 
   if (!civ) {
     return (
-      <main className="container">
-        <p>
-          文明が見つかりません。<Link href="/wiki">wiki へ戻る</Link>
+      <main className="mx-auto max-w-3xl px-5 py-8">
+        <p className="text-muted-foreground">
+          文明が見つかりません。
+          <Link href="/wiki" className="ml-1 underline">
+            wiki へ戻る
+          </Link>
         </p>
       </main>
     );
   }
 
   return (
-    <main className="container">
-      <div className="row">
-        <h1 style={{ margin: 0 }}>{civ.name}</h1>
-        <div className="spacer" />
-        <Link href="/wiki" className="btn">
-          ← wiki
+    <main className="mx-auto max-w-3xl px-5 py-8">
+      <Button variant="ghost" size="sm" asChild className="-ml-2 mb-2">
+        <Link href="/wiki">
+          <ArrowLeft className="size-4" />
+          wiki
         </Link>
-      </div>
+      </Button>
+      <h1 className="text-2xl font-semibold tracking-tight">{civ.name}</h1>
 
-      <div className="card">
-        <h3>文明特性：{civ.ability.name}</h3>
-        <p style={{ margin: 0 }}>{civ.ability.description}</p>
-      </div>
-
-      <h2>指導者</h2>
-      {civ.leaders.map((l) => (
-        <div className="card" key={l.id}>
-          <h3>{l.name}</h3>
-          <p>
-            <strong>能力：{l.ability.name}</strong>
-            <br />
-            {l.ability.description}
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle className="text-base">
+            文明特性 ・ {civ.ability.name}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {civ.ability.description}
           </p>
-          {l.agenda && (
-            <p style={{ margin: 0 }}>
-              <strong>アジェンダ：{l.agenda.name}</strong>
-              <br />
-              {l.agenda.description}
-            </p>
-          )}
-        </div>
-      ))}
+        </CardContent>
+      </Card>
 
-      <h2>固有ユニット</h2>
-      {civ.uniqueUnits.map((u) => (
-        <div className="card" key={u.name}>
-          <h3>{u.name}</h3>
-          <p style={{ margin: 0 }}>{u.description}</p>
-        </div>
-      ))}
+      <h2 className="mt-6 mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        指導者
+      </h2>
+      <div className="space-y-3">
+        {civ.leaders.map((l) => (
+          <Card key={l.id}>
+            <CardHeader>
+              <CardTitle className="text-base">{l.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <div>
+                <Badge variant="secondary" className="mb-1.5">
+                  能力
+                </Badge>
+                <p className="font-medium">{l.ability.name}</p>
+                <p className="leading-relaxed text-muted-foreground">
+                  {l.ability.description}
+                </p>
+              </div>
+              {l.agenda && (
+                <div>
+                  <Badge variant="secondary" className="mb-1.5">
+                    アジェンダ
+                  </Badge>
+                  <p className="font-medium">{l.agenda.name}</p>
+                  <p className="leading-relaxed text-muted-foreground">
+                    {l.agenda.description}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      <h2>固有施設</h2>
-      {civ.uniqueInfrastructure.map((u) => (
-        <div className="card" key={u.name}>
-          <h3>
-            {u.name}
-            {u.replaces && `（${u.replaces}を置換）`}
-          </h3>
-          <p style={{ margin: 0 }}>{u.description}</p>
-        </div>
-      ))}
+      <h2 className="mt-6 mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        固有ユニット・施設
+      </h2>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {civ.uniqueUnits.map((u) => (
+          <Card key={u.name}>
+            <CardHeader>
+              <CardTitle className="text-base">{u.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {u.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+        {civ.uniqueInfrastructure.map((u) => (
+          <Card key={u.name}>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {u.name}
+                {u.replaces && (
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
+                    （{u.replaces}を置換）
+                  </span>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {u.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </main>
   );
 }
