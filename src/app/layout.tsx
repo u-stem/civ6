@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     href="/"
                     className="transition-colors hover:text-foreground"
                   >
-                    ゲーム
+                    ルート
                   </Link>
                   <Link
                     href="/wiki"
