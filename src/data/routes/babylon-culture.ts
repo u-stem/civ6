@@ -291,7 +291,7 @@ export const babylonCulture: Route = {
       severity: "danger",
       when: (s) => counter(s, "slinger") < 3 && !flag(s, "tech.archery"),
       message:
-        "投石兵が3体未満。今敵を倒すと弓術が早発し連鎖が壊れる。3体揃えてから倒すこと。",
+        "投石兵が3体未満。今 投石兵で敵を倒すと弓術が早発して連鎖が壊れる。投石兵を3体揃えてから倒すこと。",
     },
     {
       id: "w-mining",
