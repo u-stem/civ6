@@ -35,7 +35,7 @@ export function NewSessionDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [routeId, setRouteId] = useState(ROUTES[0]?.id ?? "");
-  const [ruleset, setRuleset] = useState<Ruleset>("rise-and-fall");
+  const [ruleset, setRuleset] = useState<Ruleset>("gathering-storm");
   const [name, setName] = useState("");
   const route = useMemo(() => ROUTES.find((r) => r.id === routeId), [routeId]);
 

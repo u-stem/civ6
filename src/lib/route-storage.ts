@@ -10,8 +10,8 @@ export const RouteSessionSchema = z.object({
   id: z.string(),
   name: z.string(),
   routeId: z.string(),
-  // 選択した拡張。ruleset 導入前の旧セッションは R&F として復元する。
-  ruleset: RulesetSchema.default("rise-and-fall"),
+  // 選択した拡張。ruleset 導入前の旧セッションは収録ルートの前提(嵐の訪れ)で復元する。
+  ruleset: RulesetSchema.default("gathering-storm"),
   createdAt: z.string(),
   state: GameStateSchema,
 });
@@ -43,7 +43,12 @@ function readRaw(): string | null {
 
 function writeAll(sessions: RouteSession[]): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(sessions));
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(sessions));
+  } catch (e) {
+    // QuotaExceeded やプライベートモード等で書き込めない場合に握り潰さず記録する。
+    console.error("セッションの保存に失敗しました", e);
+  }
 }
 
 export function loadSessions(): RouteSession[] {

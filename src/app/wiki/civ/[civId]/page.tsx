@@ -3,7 +3,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCivilization } from "@/data";
+import { CIVILIZATIONS, getCivilization } from "@/data";
+
+// 収録済み文明をビルド時に静的生成する(同期データなので動的レンダリング不要)。
+export function generateStaticParams() {
+  return CIVILIZATIONS.map((c) => ({ civId: c.id }));
+}
 
 export default async function CivPage({
   params,

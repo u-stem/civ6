@@ -47,13 +47,25 @@ export const babylonCulture: Route = {
     { key: "districtsBuilt", label: "建設済みの専門区域数" },
   ],
   flags: [
-    { key: "tech.mining", label: "採掘(技術)" },
+    { key: "tech.mining", label: "採鉱(技術)" },
+    // 灌漑: 採鉱で資源を耕作できるようになってから出す。
+    {
+      key: "tech.irrigation",
+      label: "灌漑(技術)",
+      relevant: (s) => flag(s, "tech.mining"),
+    },
     { key: "tech.archery", label: "弓術(技術)" },
     // 機械: 弓術の先にあるので、弓術取得後に出す。
     {
       key: "tech.machinery",
       label: "機械(技術)",
       relevant: (s) => flag(s, "tech.archery"),
+    },
+    // 徒弟制度: 鉱山3つでひらめき。鉱山が揃ってから出す。
+    {
+      key: "tech.apprenticeship",
+      label: "徒弟制度(技術)",
+      relevant: (s) => counter(s, "mine") >= 1,
     },
     { key: "civic.dramaPoetry", label: "演劇と詩(社会制度)" },
     { key: "hero.davinci", label: "大技術者ダ・ヴィンチ確保" },
@@ -68,7 +80,7 @@ export const babylonCulture: Route = {
       type: "sequence",
       id: "seq-mining",
       lane: "tech",
-      label: "採掘を自力研究",
+      label: "採鉱を自力研究",
       detail: "ひらめき無し。エウレカ連鎖の起点なので最初に取る。",
       done: (s) => flag(s, "tech.mining"),
     },
@@ -87,7 +99,7 @@ export const babylonCulture: Route = {
       lane: "tech",
       label: "灌漑(資源を耕作でひらめき発火)",
       detail: "パルグムを解禁。パルグム自体は急がず随時設置でよい。",
-      done: (s) => counter(s, "mine") >= 1,
+      done: (s) => flag(s, "tech.irrigation"),
     },
     {
       type: "sequence",
@@ -129,7 +141,7 @@ export const babylonCulture: Route = {
       lane: "tech",
       label: "徒弟制度(鉱山3つ)",
       detail: "工業地帯を解禁。",
-      done: (s) => counter(s, "mine") >= 3,
+      done: (s) => flag(s, "tech.apprenticeship"),
     },
     {
       type: "sequence",
@@ -394,7 +406,7 @@ export const babylonCulture: Route = {
       id: "w-mining",
       severity: "warn",
       when: (s) => !flag(s, "tech.mining") && s.turn >= 5,
-      message: "採掘が未取得。ひらめき無しの起点技術、最初に自力研究で取る。",
+      message: "採鉱が未取得。ひらめき無しの起点技術、最初に自力研究で取る。",
     },
     {
       id: "w-machinery-early",

@@ -28,6 +28,7 @@ import {
   filterRoute,
   type GameState,
   LANES,
+  latchReached,
 } from "@/lib/route";
 import { getSession, updateState } from "@/lib/route-storage";
 import { RULESET_LABELS, type Ruleset } from "@/lib/schema";
@@ -48,15 +49,16 @@ export default function SessionPage() {
       setName(session.name);
       setRouteId(session.routeId);
       setRuleset(session.ruleset);
-      setState(session.state);
+      // 復元直後に達成をラッチし、以降カウンターを減らしても完了が巻き戻らないようにする。
+      const raw = getRoute(session.routeId);
+      const latched = raw
+        ? latchReached(filterRoute(raw, session.ruleset), session.state)
+        : session.state;
+      setState(latched);
+      if (latched !== session.state) updateState(id, latched);
     }
     setReady(true);
   }, [id]);
-
-  function commit(next: GameState) {
-    setState(next);
-    updateState(id, next);
-  }
 
   if (!ready) {
     return (
@@ -82,6 +84,15 @@ export default function SessionPage() {
   }
 
   const s = state;
+
+  // 状態を更新するたびに達成をラッチして保存する。
+  // アロー定数として guard の後に定義し、route の絞り込み(Route)を閉包に保つ。
+  const commit = (next: GameState) => {
+    const latched = latchReached(route, next);
+    setState(latched);
+    updateState(id, latched);
+  };
+
   const warnings = evaluateWarnings(route, s);
   const phase = currentPhase(route, s);
   const activeCount = activeBranches(route, s).length;

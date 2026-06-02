@@ -7,7 +7,12 @@ const valid: RouteSession = {
   routeId: "babylon-culture",
   ruleset: "gathering-storm",
   createdAt: "2026-06-01T00:00:00.000Z",
-  state: { turn: 12, counters: { slinger: 3 }, flags: { "tech.mining": true } },
+  state: {
+    turn: 12,
+    counters: { slinger: 3 },
+    flags: { "tech.mining": true },
+    reached: {},
+  },
 };
 
 describe("parseSessions", () => {
@@ -34,10 +39,10 @@ describe("parseSessions", () => {
     );
   });
 
-  test("ruleset 欠落の旧データは R&F として復元する", () => {
+  test("ruleset 欠落の旧データは収録ルート前提(嵐の訪れ)として復元する", () => {
     const { ruleset: _omit, ...legacy } = valid;
     expect(parseSessions(JSON.stringify([legacy]))[0]?.ruleset).toBe(
-      "rise-and-fall",
+      "gathering-storm",
     );
   });
 });
