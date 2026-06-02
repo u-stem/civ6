@@ -7,14 +7,16 @@ import {
   type GameState,
   isDone,
   laneProgress,
+  latchReached,
   meetsRuleset,
   type Route,
+  sequenceProgress,
   visibleCounters,
   visibleFlags,
 } from "./route";
 
 function makeState(o: Partial<GameState> = {}): GameState {
-  return { turn: 1, counters: {}, flags: {}, ...o };
+  return { turn: 1, counters: {}, flags: {}, reached: {}, ...o };
 }
 
 const route: Route = {
@@ -106,6 +108,44 @@ describe("isDone", () => {
   test("conditional は常に未完扱い", () => {
     const node = route.nodes[2];
     expect(node && isDone(node, makeState())).toBe(false);
+  });
+});
+
+describe("latchReached / isDone のラッチ", () => {
+  test("done 成立時に reached へ焼かれる", () => {
+    const s = makeState({ counters: { slinger: 3 } });
+    const latched = latchReached(route, s);
+    expect(latched.reached.s2).toBe(true);
+  });
+
+  test("一度ラッチされたら done 述語が偽でも完了を返す(巻き戻り防止)", () => {
+    const node = route.nodes[1]; // s2: 投石兵3
+    // カウンターは 0 に戻っているが reached 済み
+    const reverted = makeState({
+      counters: { slinger: 0 },
+      reached: { s2: true },
+    });
+    expect(node && isDone(node, reverted)).toBe(true);
+  });
+
+  test("未達成は reached に焼かれない", () => {
+    const latched = latchReached(route, makeState());
+    expect(latched.reached.s2).toBeUndefined();
+  });
+
+  test("変化が無ければ同一参照を返す", () => {
+    const s = makeState();
+    expect(latchReached(route, s)).toBe(s);
+  });
+});
+
+describe("sequenceProgress", () => {
+  test("ルート全体の完了数を数える(ラッチ尊重)", () => {
+    const s = makeState({
+      flags: { "tech.mining": true },
+      reached: { s2: true },
+    });
+    expect(sequenceProgress(route, s)).toEqual({ done: 2, total: 2 });
   });
 });
 
@@ -208,6 +248,18 @@ describe("meetsRuleset", () => {
 describe("filterRoute", () => {
   const gated: Route = {
     ...route,
+    counters: [
+      { key: "slinger", label: "投石兵" },
+      {
+        key: "gs-counter",
+        label: "GS専用カウンター",
+        minRuleset: "gathering-storm",
+      },
+    ],
+    flags: [
+      { key: "tech.archery", label: "弓術" },
+      { key: "gs-flag", label: "GS専用フラグ", minRuleset: "gathering-storm" },
+    ],
     nodes: [
       ...route.nodes,
       {
@@ -284,5 +336,17 @@ describe("filterRoute", () => {
     const f = filterRoute(gated, "gathering-storm");
     expect(f.nodes.map((n) => n.id)).toContain("c-gs");
     expect(f.branches.map((b) => b.id)).toContain("b-gs");
+  });
+
+  test("R&F では GS専用の counter/flag を除外する", () => {
+    const f = filterRoute(gated, "rise-and-fall");
+    expect(f.counters.map((c) => c.key)).not.toContain("gs-counter");
+    expect(f.flags.map((fl) => fl.key)).not.toContain("gs-flag");
+  });
+
+  test("GS では GS専用の counter/flag を残す", () => {
+    const f = filterRoute(gated, "gathering-storm");
+    expect(f.counters.map((c) => c.key)).toContain("gs-counter");
+    expect(f.flags.map((fl) => fl.key)).toContain("gs-flag");
   });
 });

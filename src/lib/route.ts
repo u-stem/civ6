@@ -16,15 +16,19 @@ export const LANE_LABELS: Record<Lane, string> = {
 };
 
 // プレイヤーが画面で入力する現在のゲーム状態。
+// reached: 一度 done に到達した sequence ノードの記録。カウンターを減らす操作
+// (投石兵を倒す・弓兵を弩兵化する等)で完了が巻き戻らないようラッチする。
+// 旧セッション(reached 無し)は default({}) で後方互換に復元する。
 export const GameStateSchema = z.object({
   turn: z.number().int().nonnegative(),
   counters: z.record(z.string(), z.number()),
   flags: z.record(z.string(), z.boolean()),
+  reached: z.record(z.string(), z.boolean()).default({}),
 });
 export type GameState = z.infer<typeof GameStateSchema>;
 
 export function emptyState(): GameState {
-  return { turn: 1, counters: {}, flags: {} };
+  return { turn: 1, counters: {}, flags: {}, reached: {} };
 }
 
 // counters/flags は存在しないキーを 0 / false として安全に読む。
@@ -87,12 +91,13 @@ export type Phase = {
 // 状態入力UIが宣言的に使う、このルートで扱うカウンター/フラグ。
 // relevant: 現在の状態でこの入力が意味を持つか。未指定は常に表示。
 // 未解放の段階で出さない・陳腐化したら消す、を宣言的に表現する。
-export type CounterDef = {
+// RulesetGated: 拡張限定の入力は filterRoute で除外する。
+export type CounterDef = RulesetGated & {
   key: string;
   label: string;
   relevant?: (s: GameState) => boolean;
 };
-export type FlagDef = {
+export type FlagDef = RulesetGated & {
   key: string;
   label: string;
   relevant?: (s: GameState) => boolean;
@@ -138,6 +143,8 @@ export function filterRoute(route: Route, ruleset: Ruleset): Route {
     meetsRuleset(x.minRuleset, ruleset);
   return {
     ...route,
+    counters: route.counters.filter(ok),
+    flags: route.flags.filter(ok),
     nodes: route.nodes.filter(ok),
     warnings: route.warnings.filter(ok),
     branches: route.branches
@@ -170,8 +177,23 @@ export function visibleFlags(route: Route, state: GameState): FlagDef[] {
   return route.flags.filter((f) => f.relevant?.(state) ?? true);
 }
 
+// sequence の完了判定。現在の done 述語が真、または過去に一度到達済み(ラッチ)なら完了。
+// カウンターを減らす操作で完了が巻き戻らないよう reached を併用する。
 export function isDone(node: RouteNode, state: GameState): boolean {
-  return node.type === "sequence" ? node.done(state) : false;
+  if (node.type !== "sequence") return false;
+  return node.done(state) || (state.reached[node.id] ?? false);
+}
+
+// 現在 done に到達している sequence を reached に焼き付けた新 state を返す。
+// commit のたびと、セッション復元直後に通すことで達成を単調増加に保つ。
+export function latchReached(route: Route, state: GameState): GameState {
+  let reached = state.reached;
+  for (const n of route.nodes) {
+    if (n.type === "sequence" && !reached[n.id] && n.done(state)) {
+      reached = { ...reached, [n.id]: true };
+    }
+  }
+  return reached === state.reached ? state : { ...state, reached };
 }
 
 // 現在のフェーズ(turn 以下で最大の fromTurn)。
@@ -203,12 +225,29 @@ export function principleNodes(route: Route): PrincipleNode[] {
   return route.nodes.filter((n): n is PrincipleNode => n.type === "principle");
 }
 
-// あるレーンの sequence の進捗(完了数 / 総数)。
+// あるレーンの sequence の進捗(完了数 / 総数)。ラッチを尊重する。
 export function laneProgress(
   route: Route,
   lane: Lane,
   state: GameState,
 ): { done: number; total: number } {
   const seq = sequenceNodes(route, lane);
-  return { done: seq.filter((n) => n.done(state)).length, total: seq.length };
+  return {
+    done: seq.filter((n) => isDone(n, state)).length,
+    total: seq.length,
+  };
+}
+
+// ルート全体の sequence の進捗(完了数 / 総数)。ラッチを尊重する。
+export function sequenceProgress(
+  route: Route,
+  state: GameState,
+): { done: number; total: number } {
+  const seq = route.nodes.filter(
+    (n): n is SequenceNode => n.type === "sequence",
+  );
+  return {
+    done: seq.filter((n) => isDone(n, state)).length,
+    total: seq.length,
+  };
 }

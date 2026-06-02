@@ -25,8 +25,7 @@ import {
   currentPhase,
   evaluateWarnings,
   filterRoute,
-  isDone,
-  type Route,
+  sequenceProgress,
 } from "@/lib/route";
 import {
   createSession,
@@ -35,12 +34,6 @@ import {
   type RouteSession,
 } from "@/lib/route-storage";
 import { RULESET_LABELS, type Ruleset } from "@/lib/schema";
-
-function sequenceProgress(route: Route, session: RouteSession) {
-  const seq = route.nodes.filter((n) => n.type === "sequence");
-  const done = seq.filter((n) => isDone(n, session.state)).length;
-  return { done, total: seq.length };
-}
 
 export default function Page() {
   const router = useRouter();
@@ -95,7 +88,7 @@ export default function Page() {
             const raw = getRoute(session.routeId);
             if (!raw) return null;
             const route = filterRoute(raw, session.ruleset);
-            const progress = sequenceProgress(route, session);
+            const progress = sequenceProgress(route, session.state);
             const warnings = evaluateWarnings(route, session.state);
             const phase = currentPhase(route, session.state);
             const dangers = warnings.filter(
